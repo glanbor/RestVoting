@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "dish", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"name", "restaurant_id"}, name = "dish_unique_restaurant_id")})
+        columnNames = {"name", "restaurant_id"}, name = "dish_unique_restaurant_id_idx")})
 public class Dish extends AbstractNamedEntity {
     
     @Column(name = "price", nullable = false)
