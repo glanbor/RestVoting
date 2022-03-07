@@ -32,12 +32,14 @@ public class DishController {
     }
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
     public List<Dish> getAll(@PathVariable int restaurantId) {
-        log.info("getAll for restaurant {}", restaurantId);
+        log.info("getAll Dishes for restaurant {}", restaurantId);
         return dishRepository.getAll(restaurantId);
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Dish> get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get dish {} for restaurant {}", id, restaurantId);
         Dish dish = dishRepository.findById(id).filter(d -> d.getRestaurant().getId() == restaurantId).orElse(null);
@@ -52,7 +54,7 @@ public class DishController {
     }
 
     @PostMapping()
-    public ResponseEntity<Dish> createWithLocation(@RequestBody Dish dish, @PathVariable int restaurantId) {
+    public ResponseEntity<Dish> create(@RequestBody Dish dish, @PathVariable int restaurantId) {
         log.info("create dish {} for restaurant {}", dish, restaurantId);
         checkNew(dish);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));

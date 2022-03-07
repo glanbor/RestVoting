@@ -10,6 +10,7 @@ import ru.restvoting.model.Dish;
 
 import java.util.List;
 
+@Transactional(readOnly = true)
 @Repository
 public interface DishRepository extends JpaRepository<Dish, Integer> {
 
@@ -19,6 +20,6 @@ public interface DishRepository extends JpaRepository<Dish, Integer> {
     @Transactional
     @Modifying
     @Query("DELETE FROM Dish d WHERE d.id=:id AND d.restaurant.id=:restaurantId")
-    int delete(@Param("id") int id, @Param("userId") int userId);
+    int delete(@Param("id") int id, @Param("userId") int restaurantId);
 
 }
