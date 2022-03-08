@@ -1,7 +1,12 @@
 package ru.restvoting.util;
 
 import ru.restvoting.model.AbstractBaseEntity;
+import ru.restvoting.model.Vote;
+import ru.restvoting.util.exception.IllegalDateTimeException;
 import ru.restvoting.util.exception.NotFoundException;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class ValidationUtil {
     private ValidationUtil() {
@@ -39,6 +44,13 @@ public class ValidationUtil {
             entity.setId(id);
         } else if (entity.id() != id) {
             throw new IllegalArgumentException(entity + " must be with id=" + id);
+        }
+    }
+
+    public static void checkVoteDateTime (Vote vote) {
+        if (!(vote.getVoteDate().isEqual(LocalDate.now()))
+                || (vote.getVoteDate().isEqual(LocalDate.now()) && LocalTime.now().getHour() > 10)) {
+            throw new IllegalDateTimeException("The vote can be accepted only today before 11:00");
         }
     }
 }
