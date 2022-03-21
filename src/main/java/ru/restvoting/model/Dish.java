@@ -1,13 +1,23 @@
 package ru.restvoting.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+
+@Setter
+@Getter
+@NoArgsConstructor
+@ToString(callSuper = true, exclude = "restaurant")
 @Entity
 @Table(name = "dish", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"name", "restaurant_id"}, name = "dish_unique_restaurant_id_idx")})
+        columnNames = {"name", "restaurant_id"}, name = "unique_restaurant_for_dish_idx")})
 public class Dish extends AbstractNamedEntity {
     
     @Column(name = "price", nullable = false)
@@ -18,10 +28,8 @@ public class Dish extends AbstractNamedEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
-
-    public Dish() {
-    }
 
     public Dish(Dish d) {
         this(d.id, d.name, d.price, d.restaurant);
@@ -33,28 +41,4 @@ public class Dish extends AbstractNamedEntity {
         this.restaurant = restaurant;
     }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
-
-    @Override
-    public String toString() {
-        return "Dish{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                '}';
-    }
 }

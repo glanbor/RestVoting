@@ -18,7 +18,7 @@ import java.util.List;
 import static ru.restvoting.util.ValidationUtil.checkNew;
 
 @RestController
-@RequestMapping("/restvot/restaurants/{restaurantId}/dishes")
+@RequestMapping("/restvoting/admin/restaurants/{restaurantId}/dishes")
 public class DishController {
     private static final Logger log = LoggerFactory.getLogger(DishController.class);
 
@@ -40,17 +40,18 @@ public class DishController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Dish> get(@PathVariable int id, @PathVariable int restaurantId) {
+    public Dish get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get dish {} for restaurant {}", id, restaurantId);
-        Dish dish = dishRepository.findById(id).filter(d -> d.getRestaurant().getId() == restaurantId).orElse(null);
-        return ResponseEntity.ok(dish);
+        Dish dish = dishRepository.findById(id)
+                .filter(d -> d.getRestaurant().getId() == restaurantId).orElse(null);
+        return dish;
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete dish {} for restaurant {}", id, restaurantId);
-        dishRepository.delete(id, restaurantId);
+        ValidationUtil.checkNotFoundWithId(dishRepository.delete(id, restaurantId), id);
     }
 
     @PostMapping()

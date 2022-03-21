@@ -1,5 +1,7 @@
 package ru.restvoting.web.menu;
 
+import lombok.AllArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,22 +24,17 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static ru.restvoting.util.ValidationUtil.checkNew;
+import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 
 @RestController
-@RequestMapping("/restvot/restaurants/{restaurantId}/menus")
+@AllArgsConstructor
+@RequestMapping("/restvoting/admin/restaurants/{restaurantId}/menus")
 public class MenuController {
     private static final Logger log = LoggerFactory.getLogger(MenuController.class);
 
     private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
     private final DishRepository dishRepository;
-
-    @Autowired
-    public MenuController(MenuRepository menuRepository, RestaurantRepository restaurantRepository, DishRepository dishRepository) {
-        this.menuRepository = menuRepository;
-        this.restaurantRepository = restaurantRepository;
-        this.dishRepository = dishRepository;
-    }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
@@ -51,10 +48,10 @@ public class MenuController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Menu> get(@PathVariable int id, @PathVariable int restaurantId) {
+    public Menu get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get menu {} for restaurant {}", id, restaurantId);
-        Menu menu = menuRepository.findById(id).filter(d -> d.getRestaurant().getId() == restaurantId).orElse(null);
-        return ResponseEntity.ok(menu);
+        Menu menu = menuRepository.findById(id).filter(m -> m.getRestaurant().getId() == restaurantId).orElse(null);
+        return checkNotFoundWithId(menu, id);
     }
 
     @DeleteMapping("/{id}")
@@ -62,7 +59,7 @@ public class MenuController {
     @CacheEvict(value="menus", allEntries = true)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete menu {} for restaurant {}", id, restaurantId);
-        menuRepository.delete(id, restaurantId);
+        ValidationUtil.checkNotFoundWithId(menuRepository.delete(id, restaurantId), id);
     }
 
     @PostMapping()

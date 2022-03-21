@@ -15,6 +15,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Integer> {
+
     @Query("SELECT m FROM Menu m WHERE m.restaurant.id=:restaurantId AND m.menuDate >=:startDate " +
             "AND m.menuDate <=:endDate ORDER BY m.menuDate DESC")
     List<Menu> getAll(int restaurantId, LocalDate startDate, LocalDate endDate);
