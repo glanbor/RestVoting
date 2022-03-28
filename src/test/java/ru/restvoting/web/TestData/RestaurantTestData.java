@@ -9,7 +9,7 @@ import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
 
 public class RestaurantTestData {
     public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator("menus", "votes", "dishes");
+            MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class, "menus", "votes", "dishes");
 
     public static final int NOT_FOUND = 10;
     public static final int RESTAURANT1_ID = START_SEQ + 4;

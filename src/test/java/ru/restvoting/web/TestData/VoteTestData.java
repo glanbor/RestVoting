@@ -11,7 +11,7 @@ import static ru.restvoting.web.TestData.RestaurantTestData.*;
 
 public class VoteTestData {
     public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator("restaurant");
+            MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "restaurant");
 
     public static final int VOTE1_ID = START_SEQ + 34;
     public static final int VOTE_NOT_FOUND = 10;

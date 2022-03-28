@@ -11,7 +11,7 @@ import static ru.restvoting.web.TestData.RestaurantTestData.*;
 
 public class DishTestData {
     public static final MatcherFactory.Matcher<Dish> DISH_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator("restaurant");
+            MatcherFactory.usingIgnoringFieldsComparator(Dish.class, "restaurant");
 
     public static final int NOT_FOUND = 10;
     public static final int DISH1_ID = START_SEQ + 20;

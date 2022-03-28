@@ -47,7 +47,7 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkVoteDateTime (Vote vote) {
+    public static void validateVote(Vote vote) {
         if (!(vote.getVoteDate().isEqual(LocalDate.now()))
                 || (vote.getVoteDate().isEqual(LocalDate.now()) && LocalTime.now().getHour() > 10)) {
             throw new IllegalDateTimeException("The vote can be accepted only today before 11:00");

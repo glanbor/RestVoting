@@ -1,25 +1,24 @@
 package ru.restvoting.web.menu;
 
 import lombok.AllArgsConstructor;
-import lombok.AllArgsConstructor;
-import org.hibernate.annotations.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.model.Menu;
-import ru.restvoting.repository.DishRepository;
 import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,16 +27,16 @@ import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/restvoting/admin/restaurants/{restaurantId}/menus")
+@RequestMapping(value = MenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MenuController {
+    public static final String REST_URL = "/rest/admin/restaurants/{restaurantId}/menus";
     private static final Logger log = LoggerFactory.getLogger(MenuController.class);
 
     private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
-    private final DishRepository dishRepository;
+
 
     @GetMapping()
-    @ResponseStatus(HttpStatus.OK)
     @Cacheable("menus")
     public List<Menu> getAll(@PathVariable int restaurantId,
                              @RequestParam @Nullable LocalDate startDate,
@@ -47,7 +46,6 @@ public class MenuController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public Menu get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get menu {} for restaurant {}", id, restaurantId);
         Menu menu = menuRepository.findById(id).filter(m -> m.getRestaurant().getId() == restaurantId).orElse(null);
@@ -62,17 +60,20 @@ public class MenuController {
         ValidationUtil.checkNotFoundWithId(menuRepository.delete(id, restaurantId), id);
     }
 
-    @PostMapping()
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(value="menus", allEntries = true)
     public ResponseEntity<Menu> create(@RequestBody Menu menu, @PathVariable int restaurantId) {
         log.info("create menu {} for restaurant {}", menu, restaurantId);
         checkNew(menu);
         menu.setRestaurant(restaurantRepository.getById(restaurantId));
         Menu created = menuRepository.save(menu);
-        return ResponseEntity.ok(created);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(value="menus", allEntries = true)
     public void update(@Valid @RequestBody Menu menu, @PathVariable int id, @PathVariable int restaurantId) {

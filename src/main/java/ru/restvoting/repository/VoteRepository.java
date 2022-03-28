@@ -19,7 +19,7 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
 
     @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.voteDate >=:startDate " +
             "AND v.voteDate <=:endDate ORDER BY v.voteDate DESC")
-    List<Vote> getAllbyUser(int id, LocalDate startDate, LocalDate endDate);
+    List<Vote> getAllByUser(int id, LocalDate startDate, LocalDate endDate);
 
     @Query("SELECT v FROM Vote v WHERE v.voteDate >=:startDate " +
             "AND v.voteDate <=:endDate ORDER BY v.voteDate DESC")

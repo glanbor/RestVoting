@@ -10,7 +10,8 @@ import java.util.Date;
 import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
-    public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator("registered", "password");
+    public static final MatcherFactory.Matcher<User> USER_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered", "password");
 
     public static final int USER_ID = START_SEQ;
     public static final int ADMIN_ID = START_SEQ + 2;
@@ -21,7 +22,7 @@ public class UserTestData {
 
 
     public static User getNew() {
-        return new User(null, "New", "new@gmail.com", "newPass", false, new Date(),Collections.singleton(Role.USER));
+        return new User(null, "New", "new@gmail.com", "newPass", false, new Date(), Collections.singleton(Role.USER));
     }
 
     public static User getUpdated() {
@@ -33,5 +34,6 @@ public class UserTestData {
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
     }
+
 
 }

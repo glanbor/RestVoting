@@ -12,7 +12,7 @@ import static ru.restvoting.web.TestData.RestaurantTestData.*;
 
 public class MenuTestData {
     public static final MatcherFactory.Matcher<Menu> MENU_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator("restaurant", "dishes");
+            MatcherFactory.usingIgnoringFieldsComparator(Menu.class, "restaurant", "dishes");
 
     public static final int NOT_FOUND = 10;
     public static final int MENU1_ID = START_SEQ + 8;

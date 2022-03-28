@@ -10,14 +10,13 @@ import org.hibernate.validator.constraints.Range;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-
+@Entity
+@Table(name = "dish", uniqueConstraints = {@UniqueConstraint(
+        columnNames = {"name", "restaurant_id"}, name = "unique_restaurant_for_dish_idx")})
 @Setter
 @Getter
 @NoArgsConstructor
 @ToString(callSuper = true, exclude = "restaurant")
-@Entity
-@Table(name = "dish", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"name", "restaurant_id"}, name = "unique_restaurant_for_dish_idx")})
 public class Dish extends AbstractNamedEntity {
     
     @Column(name = "price", nullable = false)

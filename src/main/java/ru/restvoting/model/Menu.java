@@ -10,15 +10,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-
+@Entity
+@Table(name = "menu", uniqueConstraints = {@UniqueConstraint(
+        columnNames = {"restaurant_id", "menu_date"}, name = "unique_restaurant_for_date_idx")})
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor()
 @ToString(callSuper = true, exclude = {"dishList", "restaurant"})
-@Entity
-@Table(name = "menu", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"restaurant_id", "menu_date"}, name = "unique_restaurant_for_date_idx")})
 public class Menu extends AbstractBaseEntity{
 
     @Column(name = "menu_date", nullable = false)
