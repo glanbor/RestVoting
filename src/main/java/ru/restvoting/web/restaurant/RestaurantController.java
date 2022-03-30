@@ -6,20 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.model.Restaurant;
 
 import ru.restvoting.repository.RestaurantRepository;
+import ru.restvoting.repository.VoteRepository;
 import ru.restvoting.to.RestaurantTo;
+import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.RestaurantUtil;
 import ru.restvoting.util.ValidationUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.restvoting.util.ValidationUtil.checkNew;
@@ -31,18 +36,22 @@ public class RestaurantController {
     private static final Logger log = LoggerFactory.getLogger(RestaurantController.class);
 
     private final RestaurantRepository restaurantRepository;
+    private final VoteRepository voteRepository;
 
     @Autowired
-    public RestaurantController(RestaurantRepository restaurantRepository) {
+    public RestaurantController(RestaurantRepository restaurantRepository, VoteRepository voteRepository) {
         this.restaurantRepository = restaurantRepository;
+        this.voteRepository = voteRepository;
     }
-
 
     @GetMapping()
     @Cacheable("restaurants")
-    public List<RestaurantTo> getAll() {
-        log.info("get all restaurants");
-        return RestaurantUtil.getTos(restaurantRepository.findAll(Sort.by("name")));
+    public List<RestaurantTo> getAll(
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+    @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        log.info("get all restaurants with votes amount by voting dates interval");
+        return RestaurantUtil.getTos(restaurantRepository.findAll(), voteRepository.getAll(
+                DateTimeUtil.setStartDate(startDate), DateTimeUtil.setStartDate(endDate)));
     }
 
     @GetMapping("/{id}")

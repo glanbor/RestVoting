@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,8 @@ public class MenuController {
     @GetMapping()
     @Cacheable("menus")
     public List<Menu> getAll(@PathVariable int restaurantId,
-                             @RequestParam @Nullable LocalDate startDate,
-                             @RequestParam @Nullable LocalDate endDate) {
+                             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         log.info("get menus for restaurant {} with interval", restaurantId);
         return menuRepository.getAll(restaurantId, DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
     }
@@ -50,6 +51,13 @@ public class MenuController {
         log.info("get menu {} for restaurant {}", id, restaurantId);
         Menu menu = menuRepository.findById(id).filter(m -> m.getRestaurant().getId() == restaurantId).orElse(null);
         return checkNotFoundWithId(menu, id);
+    }
+
+    @GetMapping("/{id}/with-dishes")
+    public Menu getWithMeals(@PathVariable int id, @PathVariable int restaurantId) {
+        log.info("get menu {} for restaurant {} with dishes", id, restaurantId);
+        Menu menu = checkNotFoundWithId(menuRepository.getWithDishes(id), id);
+        return menu;
     }
 
     @DeleteMapping("/{id}")
@@ -62,7 +70,7 @@ public class MenuController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(value="menus", allEntries = true)
-    public ResponseEntity<Menu> create(@RequestBody Menu menu, @PathVariable int restaurantId) {
+    public ResponseEntity<Menu> createWithLocation(@RequestBody Menu menu, @PathVariable int restaurantId) {
         log.info("create menu {} for restaurant {}", menu, restaurantId);
         checkNew(menu);
         menu.setRestaurant(restaurantRepository.getById(restaurantId));

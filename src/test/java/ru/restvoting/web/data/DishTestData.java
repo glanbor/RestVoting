@@ -1,4 +1,4 @@
-package ru.restvoting.web.TestData;
+package ru.restvoting.web.data;
 
 import ru.restvoting.model.Dish;
 import ru.restvoting.web.MatcherFactory;
@@ -7,7 +7,7 @@ import java.util.List;
 
 import static java.time.LocalDateTime.of;
 import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
-import static ru.restvoting.web.TestData.RestaurantTestData.*;
+import static ru.restvoting.web.data.RestaurantTestData.*;
 
 public class DishTestData {
     public static final MatcherFactory.Matcher<Dish> DISH_MATCHER =
@@ -15,6 +15,7 @@ public class DishTestData {
 
     public static final int NOT_FOUND = 10;
     public static final int DISH1_ID = START_SEQ + 20;
+    public static final int FR_DISH1_ID = DISH1_ID + 9;
 
     public static final Dish amDish1 = new Dish(DISH1_ID, "AmFood1", 10.99, restaurantUSA);
     public static final Dish amDish2 = new Dish(DISH1_ID+1, "AmFood2", 20.99, restaurantUSA);
@@ -31,7 +32,7 @@ public class DishTestData {
     public static final Dish frDish4= new Dish(DISH1_ID+12, "FrFood4", 400, restaurantFrance);
     public static final Dish frDish5= new Dish(DISH1_ID+13, "FrFood5", 500, restaurantFrance);
 
-    public static final List<Dish> getAllFrench = List.of(frDish1, frDish2, frDish3, frDish4, frDish5);
+    public static final List<Dish> allFrenchDishes = List.of(frDish1, frDish2, frDish3, frDish4, frDish5);
 
     public static final List<Dish> dishesForUSAMenu1 = List.of(amDish1);
     public static final List<Dish> dishesForUSAMenu2 = List.of(amDish2);
@@ -47,7 +48,7 @@ public class DishTestData {
     public static final List<Dish> dishesForFrenchMenu3 = List.of(frDish1, frDish2, frDish3, frDish5);
 
     public static Dish getNew() {
-        return new Dish(null, "Created Dish", 99, restaurantUSA);
+        return new Dish(null, "Created Dish", 99, restaurantFrance);
     }
-    public static Dish getUpdated(){return new Dish(DISH1_ID, "Updated Dish", 99, restaurantUSA);}
+    public static Dish getUpdated(){return new Dish(FR_DISH1_ID, "Updated Dish", 99, restaurantFrance);}
 }

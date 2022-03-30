@@ -1,18 +1,21 @@
-package ru.restvoting.web.TestData;
+package ru.restvoting.web.data;
 
 import ru.restvoting.model.Menu;
 import ru.restvoting.web.MatcherFactory;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
-import static ru.restvoting.web.TestData.DishTestData.*;
-import static ru.restvoting.web.TestData.RestaurantTestData.*;
+import static ru.restvoting.web.data.DishTestData.*;
+import static ru.restvoting.web.data.RestaurantTestData.*;
 
 public class MenuTestData {
     public static final MatcherFactory.Matcher<Menu> MENU_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Menu.class, "restaurant", "dishes");
+    public static final MatcherFactory.Matcher<Menu> MENU_WITH_DISHES_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(Menu.class, "restaurant");
 
     public static final int NOT_FOUND = 10;
     public static final int MENU1_ID = START_SEQ + 8;
@@ -42,11 +45,13 @@ public class MenuTestData {
     public static final Menu menuFrance3 =
             new Menu(MENU1_ID + 11, LocalDate.now(), restaurantFrance, dishesForFrenchMenu3);
 
-    public static Menu getNewMenu() {
+    public static final List<Menu> allUSAMenus = List.of(menuUSA1, menuUSA2, menuUSA3);
+
+    public static Menu getNew() {
         return new Menu(null, LocalDate.now(), restaurantUSA, dishesForUSAMenu3);
     }
 
-    public static Menu getUpdatedMenu() {
-        return new Menu(MENU1_ID+9, LocalDate.now(), restaurantFrance, dishesForFrenchMenu3);
+    public static Menu getUpdated() {
+        return new Menu(MENU1_ID, LocalDate.now(), restaurantUSA, dishesForUSAMenu3);
     }
 }

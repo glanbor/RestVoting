@@ -25,6 +25,7 @@ public class Restaurant extends AbstractNamedEntity {
     @JsonManagedReference
     private List<Menu> menuList;
 
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     private List<Vote> voteList;
 

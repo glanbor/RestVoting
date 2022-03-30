@@ -1,4 +1,4 @@
-package ru.restvoting.web.TestData;
+package ru.restvoting.web.data;
 
 import ru.restvoting.model.Role;
 import ru.restvoting.model.User;

@@ -1,5 +1,6 @@
 package ru.restvoting.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,17 +26,19 @@ public class Vote extends AbstractBaseEntity {
     @Column(name = "user_id", nullable = false, unique = true)
     private int userId;
 
-    @Column(name = "restaurant_id", nullable = false)
-    private int restId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JsonBackReference
+    private Restaurant restaurant;
 
-    public Vote(Integer id, LocalDate voteDate, int userId, int restId) {
+    public Vote(Integer id, LocalDate voteDate, int userId, Restaurant restaurant) {
         super(id);
         this.voteDate = voteDate;
         this.userId = userId;
-        this.restId=restId;
+        this.restaurant=restaurant;
     }
     public Vote(Vote v) {
-        this(v.id(), v.voteDate, v.userId, v.restId);
+        this(v.id(), v.voteDate, v.userId, v.restaurant);
     }
 
 }
