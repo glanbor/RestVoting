@@ -3,7 +3,14 @@ package ru.restvoting.web.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.restvoting.model.User;
 import ru.restvoting.repository.UserRepository;
 
@@ -48,4 +55,6 @@ public abstract class AbstractUserController {
         log.info("getByEmail {}", email);
         return userRepository.getByEmail(email);
     }
+
+
 }

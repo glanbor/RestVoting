@@ -25,20 +25,20 @@
 
     <context:component-scan base-package="ru.restvoting.**.web"/>
 
-        <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
           p:cacheSeconds="5"
           p:defaultEncoding="UTF-8">
-        <property name="basenames" value="file:///#{systemEnvironment[TOPJAVA_ROOT]}/config/messages/app"/>
+        <property name="basenames" value="file:///#{systemEnvironment[RESTVOTING_ROOT]}/config/messages/app"/>
         <property name="fallbackToSystemLocale" value="false"/>
     </bean>
 
-<!--    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean" >-->
-<!--        <property name="registerDefaultFormatters" value="false" />-->
-<!--        <property name="formatters">-->
-<!--            <set>-->
-<!--                <bean class="ru.restvoting.util.DateTimeUtil.LocalTimeFormatter"/>-->
-<!--                <bean class="ru.restvoting.util.DateTimeUtil.LocalDateFormatter"/>-->
-<!--            </set>-->
-<!--        </property>-->
-<!--    </bean>-->
+    <!--    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean" >-->
+    <!--        <property name="registerDefaultFormatters" value="false" />-->
+    <!--        <property name="formatters">-->
+    <!--            <set>-->
+    <!--                <bean class="ru.restvoting.util.DateTimeUtil.LocalTimeFormatter"/>-->
+    <!--                <bean class="ru.restvoting.util.DateTimeUtil.LocalDateFormatter"/>-->
+    <!--            </set>-->
+    <!--        </property>-->
+    <!--    </bean>-->
 </beans>

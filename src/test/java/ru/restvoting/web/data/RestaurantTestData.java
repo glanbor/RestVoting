@@ -12,7 +12,7 @@ public class RestaurantTestData {
     public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class, "votes", "dishes");
     public static final MatcherFactory.Matcher<RestaurantTo> RESTAURANT_TO_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator(RestaurantTo.class, "");
+            MatcherFactory.usingEqualsComparator(RestaurantTo.class);
 
     public static final int NOT_FOUND = 10;
     public static final int RESTAURANT1_ID = START_SEQ + 4;

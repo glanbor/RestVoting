@@ -87,4 +87,5 @@ public class DishControllerTest extends AbstractControllerTest {
         DISH_MATCHER.assertMatch(dishRepository.getById(FR_DISH1_ID), updated);
     }
 
+
 }

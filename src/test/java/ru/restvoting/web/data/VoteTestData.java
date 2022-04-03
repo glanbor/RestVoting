@@ -11,7 +11,7 @@ import static ru.restvoting.web.data.RestaurantTestData.*;
 
 public class VoteTestData {
     public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "restaurant");
+            MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "");
 
     public static final int VOTE1_ID = START_SEQ + 34;
     public static final int VOTE_NOT_FOUND = 10;
@@ -29,6 +29,6 @@ public class VoteTestData {
     }
 
     public static Vote getUpdated() {
-        return new Vote(VOTE1_ID+3, LocalDate.now(), 100001, restaurantFrance);
+        return new Vote(VOTE1_ID, LocalDate.now(), 100000, restaurantFrance);
     }
 }
