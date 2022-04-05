@@ -1,5 +1,6 @@
 package ru.restvoting.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,10 +18,16 @@ import java.util.List;
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Integer> {
 
+    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.voteDate >=:startDate " +
             "AND v.voteDate <=:endDate ORDER BY v.voteDate DESC")
     List<Vote> getAllByUser(int id, LocalDate startDate, LocalDate endDate);
 
+    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.voteDate =:lunchDate")
+    Vote getByUserForDate(int id, LocalDate lunchDate);
+
+    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.voteDate >=:startDate " +
             "AND v.voteDate <=:endDate ORDER BY v.voteDate DESC")
     List<Vote> getAll(LocalDate startDate, LocalDate endDate);

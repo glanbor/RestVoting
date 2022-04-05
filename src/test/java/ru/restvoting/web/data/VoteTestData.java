@@ -24,6 +24,8 @@ public class VoteTestData {
 
     public static final List<Vote> allVotes = List.of(vote1, vote2, vote3, vote4, adminVote);
 
+    public static final List<Vote> allTodayVotes = List.of(vote3, vote4, adminVote);
+
     public static Vote getNew() {
         return new Vote(VOTE1_ID+5, LocalDate.now(), 100000, restaurantFrance);
     }

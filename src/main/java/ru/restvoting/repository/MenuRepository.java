@@ -21,6 +21,10 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
             "AND m.menuDate <=:endDate ORDER BY m.menuDate DESC")
     List<Menu> getAll(int restaurantId, LocalDate startDate, LocalDate endDate);
 
+    @EntityGraph(attributePaths = {"dishes"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT m FROM Menu m WHERE m.menuDate = :lunchDate")
+    List<Menu> getByDate(LocalDate lunchDate);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM Menu m WHERE m.id=:id AND m.restaurant.id=:restaurantId")

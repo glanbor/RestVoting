@@ -52,6 +52,8 @@ public class MenuTestData {
 
     public static final List<Menu> allUSAMenus = List.of(menuUSA1, menuUSA2, menuUSA3);
 
+    public static final List<Menu> allTodayMenu = List.of(menuUSA3, menuItalia3, menuUkraine3, menuFrance3);
+
     public static Menu getNew() {
         return new Menu(null, LocalDate.now(), restaurantUSA, dishesForUSAMenu3);
     }
