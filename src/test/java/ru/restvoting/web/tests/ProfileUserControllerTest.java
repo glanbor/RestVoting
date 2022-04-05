@@ -1,4 +1,4 @@
-package ru.restvoting.web.user;
+package ru.restvoting.web.tests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

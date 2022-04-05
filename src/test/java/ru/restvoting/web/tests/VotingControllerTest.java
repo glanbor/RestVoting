@@ -1,4 +1,4 @@
-package ru.restvoting.web.vote;
+package ru.restvoting.web.tests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import ru.restvoting.repository.VoteRepository;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.json.JsonUtil;
 import ru.restvoting.web.user.AdminUserController;
+import ru.restvoting.web.vote.VotingController;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

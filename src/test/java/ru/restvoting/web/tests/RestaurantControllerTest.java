@@ -1,4 +1,4 @@
-package ru.restvoting.web.restaurant;
+package ru.restvoting.web.tests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import ru.restvoting.util.RestaurantUtil;
 import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.menu.MenuController;
+import ru.restvoting.web.restaurant.RestaurantController;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

@@ -1,4 +1,4 @@
-package ru.restvoting.web.dish;
+package ru.restvoting.web.tests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import ru.restvoting.repository.DishRepository;
 import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.DishTestData;
+import ru.restvoting.web.dish.DishController;
 import ru.restvoting.web.json.JsonUtil;
 
 

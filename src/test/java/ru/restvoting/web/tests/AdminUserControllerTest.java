@@ -1,4 +1,4 @@
-package ru.restvoting.web.user;
+package ru.restvoting.web.tests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.UserTestData;
 import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.web.user.AdminUserController;
 
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
