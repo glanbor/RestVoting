@@ -23,6 +23,15 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
+    <bean class="org.springframework.format.support.FormattingConversionServiceFactoryBean" id="conversionService">
+        <property name="formatters">
+            <set>
+                <bean class="ru.restvoting.web.converter.DateTimeFormatters.LocalTimeFormatter"/>
+                <bean class="ru.restvoting.web.converter.DateTimeFormatters.LocalDateFormatter"/>
+            </set>
+        </property>
+    </bean>
+
     <context:component-scan base-package="ru.restvoting.**.web"/>
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
