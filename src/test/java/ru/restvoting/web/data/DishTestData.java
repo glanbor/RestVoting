@@ -50,5 +50,6 @@ public class DishTestData {
     public static Dish getNew() {
         return new Dish(null, "Created Dish", 99, restaurantFrance);
     }
-    public static Dish getUpdated(){return new Dish(FR_DISH1_ID, "Updated Dish", 99, restaurantFrance);}
+    public static Dish getUpdated(){
+        return new Dish(FR_DISH1_ID, "Updated Dish", 99, restaurantFrance);}
 }

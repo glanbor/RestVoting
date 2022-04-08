@@ -1,5 +1,6 @@
 package ru.restvoting.web.dish;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,24 +17,21 @@ import ru.restvoting.util.ValidationUtil;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static ru.restvoting.util.ValidationUtil.checkNew;
+import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping(value = DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class DishController {
-
-    private final DishRepository dishRepository;
-    private final RestaurantRepository restaurantRepository;
 
     public static final String REST_URL = "/rest/admin/restaurants/{restaurantId}/dishes";
     private static final Logger log = LoggerFactory.getLogger(DishController.class);
 
-    @Autowired
-    public DishController(DishRepository dishRepository, RestaurantRepository restaurantRepository) {
-        this.dishRepository = dishRepository;
-        this.restaurantRepository = restaurantRepository;
-    }
+    private final DishRepository dishRepository;
+    private final RestaurantRepository restaurantRepository;
 
 
     @GetMapping()
@@ -45,16 +43,14 @@ public class DishController {
     @GetMapping("/{id}")
     public Dish get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get dish {} for restaurant {}", id, restaurantId);
-        Dish dish = dishRepository.findById(id)
-                .filter(d -> d.getRestaurant().getId() == restaurantId).orElse(null);
-        return dish;
+        return checkNotFoundWithId(dishRepository.get(id, restaurantId), id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete dish {} for restaurant {}", id, restaurantId);
-        ValidationUtil.checkNotFoundWithId(dishRepository.delete(id, restaurantId), id);
+        checkNotFoundWithId(dishRepository.delete(id, restaurantId), id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -65,13 +61,13 @@ public class DishController {
         Dish created = dishRepository.save(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
+                .buildAndExpand(restaurantId, created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Dish dish, @PathVariable int id, @PathVariable int restaurantId) {
+    public void update(@RequestBody Dish dish, @PathVariable int id, @PathVariable int restaurantId) {
         log.info("update {} with id={} for restaurant {}", dish, id, restaurantId);
         ValidationUtil.assureIdConsistent(dish, id);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));

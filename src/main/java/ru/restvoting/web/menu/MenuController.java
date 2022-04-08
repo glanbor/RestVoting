@@ -77,14 +77,14 @@ public class MenuController {
         Menu created = menuRepository.save(menu);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
+                .buildAndExpand(restaurantId, created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(value="menus", allEntries = true)
-    public void update(@Valid @RequestBody Menu menu, @PathVariable int id, @PathVariable int restaurantId) {
+    public void update(@RequestBody Menu menu, @PathVariable int id, @PathVariable int restaurantId) {
         log.info("update menu {} with id={} for restaurant {}", menu, id, restaurantId);
         ValidationUtil.assureIdConsistent(menu, id);
         menu.setRestaurant(restaurantRepository.getById(restaurantId));

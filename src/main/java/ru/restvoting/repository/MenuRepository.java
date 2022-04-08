@@ -31,6 +31,6 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
     int delete(int id, int restaurantId);
 
     @EntityGraph(attributePaths = {"dishes"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT u FROM User u WHERE u.id=?1")
+    @Query("SELECT m FROM Menu m WHERE m.id=?1")
     Menu getWithDishes(int id);
 }
