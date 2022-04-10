@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.model.Restaurant;
 
+import ru.restvoting.model.Vote;
 import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.repository.VoteRepository;
 import ru.restvoting.to.RestaurantTo;
@@ -50,8 +51,8 @@ public class RestaurantController {
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
     @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         log.info("get all restaurants with votes amount by voting dates interval");
-        return RestaurantUtil.getTos(restaurantRepository.findAll(), voteRepository.getAll(
-                DateTimeUtil.setStartDate(startDate), DateTimeUtil.setStartDate(endDate)));
+        List<Vote> all = voteRepository.getAll(DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
+        return RestaurantUtil.getTos(restaurantRepository.findAll(), all);
     }
 
     @GetMapping("/{id}")

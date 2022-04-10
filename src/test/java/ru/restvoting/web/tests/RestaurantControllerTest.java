@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.restvoting.web.data.DishTestData.FR_DISH1_ID;
 import static ru.restvoting.web.data.MenuTestData.MENU1_ID;
 import static ru.restvoting.web.data.RestaurantTestData.*;
 import static ru.restvoting.web.data.VoteTestData.allVotes;
@@ -55,7 +56,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> restaurantRepository.getById(RESTAURANT1_ID));
+        assertFalse(restaurantRepository.findById(FR_DISH1_ID).isPresent());
     }
 
 

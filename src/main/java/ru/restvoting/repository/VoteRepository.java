@@ -30,7 +30,7 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.voteDate >=:startDate " +
             "AND v.voteDate <=:endDate ORDER BY v.voteDate DESC")
-    List<Vote> getAll(LocalDate startDate, LocalDate endDate);
+    List<Vote> getAll(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Transactional
     @Modifying
