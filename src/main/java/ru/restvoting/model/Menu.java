@@ -2,12 +2,11 @@ package ru.restvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,15 +26,15 @@ public class Menu extends AbstractBaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @NotNull
+
     @JsonBackReference
     private Restaurant restaurant;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "menu_with_dishes",
-            joinColumns = {@JoinColumn(name ="menu_id", referencedColumnName ="id")},
-            inverseJoinColumns={@JoinColumn(name ="dish_id", referencedColumnName ="id")})
-    private List<Dish> dishList;
+            joinColumns = {@JoinColumn(name ="menu_id")},
+            inverseJoinColumns={@JoinColumn(name ="dish_id")})
+    private List<Dish> dishList;;
 
     public Menu(Integer id, LocalDate menuDate, Restaurant restaurant, List<Dish> dishList) {
         super(id);

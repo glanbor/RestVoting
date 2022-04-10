@@ -50,7 +50,7 @@ public class DishController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete dish {} for restaurant {}", id, restaurantId);
-        checkNotFoundWithId(dishRepository.delete(id, restaurantId), id);
+        checkNotFoundWithId(dishRepository.delete(id, restaurantId) != 0, id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

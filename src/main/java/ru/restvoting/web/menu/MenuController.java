@@ -13,12 +13,12 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.model.Menu;
+import ru.restvoting.model.Restaurant;
 import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -49,15 +49,15 @@ public class MenuController {
     @GetMapping("/{id}")
     public Menu get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get menu {} for restaurant {}", id, restaurantId);
-        Menu menu = menuRepository.findById(id).filter(m -> m.getRestaurant().getId() == restaurantId).orElse(null);
+        Menu menu = menuRepository.findById(id).orElse(null);
         return checkNotFoundWithId(menu, id);
     }
 
     @GetMapping("/{id}/with-dishes")
     public Menu getWithMeals(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get menu {} for restaurant {} with dishes", id, restaurantId);
-        Menu menu = checkNotFoundWithId(menuRepository.getWithDishes(id), id);
-        return menu;
+        Menu menu = menuRepository.getWithDishes(id, restaurantId);
+        return checkNotFoundWithId(menu, id);
     }
 
     @DeleteMapping("/{id}")
@@ -65,7 +65,7 @@ public class MenuController {
     @CacheEvict(value="menus", allEntries = true)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete menu {} for restaurant {}", id, restaurantId);
-        ValidationUtil.checkNotFoundWithId(menuRepository.delete(id, restaurantId), id);
+        ValidationUtil.checkNotFoundWithId(menuRepository.delete(id, restaurantId) !=0, id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -73,7 +73,9 @@ public class MenuController {
     public ResponseEntity<Menu> createWithLocation(@RequestBody Menu menu, @PathVariable int restaurantId) {
         log.info("create menu {} for restaurant {}", menu, restaurantId);
         checkNew(menu);
-        menu.setRestaurant(restaurantRepository.getById(restaurantId));
+        Restaurant restaurant = restaurantRepository.getById(restaurantId);
+        menu.setRestaurant(restaurant);
+        menu.getDishList().forEach(dish -> dish.setRestaurant(restaurant));
         Menu created = menuRepository.save(menu);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")

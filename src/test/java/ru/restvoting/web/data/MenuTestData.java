@@ -14,13 +14,17 @@ import static ru.restvoting.web.data.RestaurantTestData.*;
 
 public class MenuTestData {
     public static final MatcherFactory.Matcher<Menu> MENU_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator(Menu.class, "restaurant", "dishes");
+            MatcherFactory.usingIgnoringFieldsComparator(Menu.class, "restaurant", "dishList");
     public static final MatcherFactory.Matcher<Menu> MENU_WITH_DISHES_MATCHER =
-            MatcherFactory.usingAssertions(Menu.class,
-                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("menu.restaurant").isEqualTo(e),
-                    (a, e) -> {
-                        throw new UnsupportedOperationException();
-                    });
+            MatcherFactory.usingIgnoringFieldsComparator(Menu.class, "restaurant", "dishList.restaurant");
+
+//    public static final MatcherFactory.Matcher<Menu> MENU_WITH_DISHES_MATCHER =
+//            MatcherFactory.usingAssertions(Menu.class,
+//                    (a, e) -> assertThat(a).usingRecursiveComparison().
+//                            ignoringFields("restaurant", "dishList.restaurant").isEqualTo(e),
+//                    (a, e) -> {
+//                        throw new UnsupportedOperationException();
+//                    });
 
     public static final int NOT_FOUND = 10;
     public static final int MENU1_ID = START_SEQ + 8;
@@ -50,7 +54,7 @@ public class MenuTestData {
     public static final Menu menuFrance3 =
             new Menu(MENU1_ID + 11, LocalDate.now(), restaurantFrance, dishesForFrenchMenu3);
 
-    public static final List<Menu> allUSAMenus = List.of(menuUSA1, menuUSA2, menuUSA3);
+    public static final List<Menu> allUSAMenus = List.of(menuUSA3, menuUSA2, menuUSA1);
 
     public static final List<Menu> allTodayMenu = List.of(menuUSA3, menuItalia3, menuUkraine3, menuFrance3);
 
