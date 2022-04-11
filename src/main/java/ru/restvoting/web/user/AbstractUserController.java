@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +38,7 @@ public abstract class AbstractUserController {
     public User create(User user) {
         log.info("create {}", user);
         checkNew(user);
+        Assert.notNull(user, "user must not be null");
         return userRepository.save(user);
     }
 

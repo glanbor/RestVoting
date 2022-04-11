@@ -6,20 +6,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.restvoting.model.Restaurant;
-import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.util.RestaurantUtil;
 import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
-import ru.restvoting.web.menu.MenuController;
 import ru.restvoting.web.restaurant.RestaurantController;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.data.DishTestData.FR_DISH1_ID;
-import static ru.restvoting.web.data.MenuTestData.MENU1_ID;
 import static ru.restvoting.web.data.RestaurantTestData.*;
 import static ru.restvoting.web.data.VoteTestData.allVotes;
 import static ru.restvoting.web.json.JsonUtil.writeValue;
@@ -49,6 +47,12 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RESTAURANT_MATCHER.contentJson(restaurantUSA));
+    }
+
+    @Test
+    void getNotFound() throws Exception {
+        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
+                restaurantRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
     }
 
     @Test

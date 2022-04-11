@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.restvoting.model.Dish;
 import ru.restvoting.repository.DishRepository;
 
+import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.DishTestData;
 import ru.restvoting.web.dish.DishController;
@@ -15,9 +16,12 @@ import ru.restvoting.web.json.JsonUtil;
 
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.data.DishTestData.*;
+
 
 public class DishControllerTest extends AbstractControllerTest {
 
@@ -45,12 +49,11 @@ public class DishControllerTest extends AbstractControllerTest {
                 .andExpect(DISH_MATCHER.contentJson(frDish1));
     }
 
-//    @Test
-//    void getNotFound() throws Exception {
-//        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
-//                .andDo(print())
-//                .andExpect(status().isNotFound());
-//    }
+    @Test
+    void getNotFound() throws Exception {
+        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
+                dishRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
+    }
 
     @Test
     void delete() throws Exception {

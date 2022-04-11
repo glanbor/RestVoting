@@ -7,7 +7,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.restvoting.model.Menu;
 import ru.restvoting.repository.MenuRepository;
-import ru.restvoting.util.ValidationUtil;
 import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.MenuTestData;
@@ -57,12 +56,11 @@ class MenuControllerTest extends AbstractControllerTest {
                 .andExpect(MENU_WITH_DISHES_MATCHER.contentJson(menuUSA1));
     }
 
-//    @Test
-//    void getNotFound() throws Exception {
-//        perform(MockMvcRequestBuilders.get(REST_URL + MenuTestData.NOT_FOUND))
-//                .andDo(print())
-//                .andExpect(status().isNotFound());
-//    }
+    @Test
+    void getNotFound() throws Exception {
+        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
+                menuRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
+    }
 
     @Test
     void delete() throws Exception {

@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.data.UserTestData.*;
 
 class AdminUserControllerTest extends AbstractControllerTest {
@@ -32,7 +33,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_MATCHER.contentJson(user, user2, admin));
+                .andExpect(USER_MATCHER.contentJson(admin, guest, user, user2));
     }
 
     @Test
@@ -47,9 +48,10 @@ class AdminUserControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
-                .andDo(print())
-                .andExpect(status().isNotFound());
+        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(userRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
+//        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
+//                .andDo(print())
+//                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -65,7 +67,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(REST_URL + USER_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> userRepository.findById(USER_ID));
+        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(userRepository.findById(USER_ID).orElse(null), USER_ID));
     }
 
     @Test
@@ -91,7 +93,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
         int newId = created.id();
         newUser.setId(newId);
         USER_MATCHER.assertMatch(created, newUser);
-        USER_MATCHER.assertMatch(userRepository.getById(newId), newUser);
+        USER_MATCHER.assertMatch(checkNotFoundWithId(userRepository.findById(newId).orElse(null), newId), newUser);
     }
 
     @Test
