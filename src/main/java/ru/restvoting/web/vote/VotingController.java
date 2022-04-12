@@ -40,14 +40,15 @@ public class VotingController {
     @Cacheable("todayMenus")
     public List<Menu> getAllMenusForToday() {
         log.info("get all Menus for today");
-        List<Menu> menuList = menuRepository.getByDate(LocalDate.now());
+        List<Menu> menuList = menuRepository.getAllByDate(LocalDate.now());
         return menuList;
     }
 
     @GetMapping("/by-user-{id}")
-    public Vote getById(@PathVariable("id") int userId) {
-        log.info("get today vote for user {}", userId);
-        return voteRepository.getByUserForDate(userId, LocalDate.now());
+    public Vote getById(@PathVariable("id") int userId,
+                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
+        log.info("get vote for user {} for date {}", userId, lunchDate);
+        return voteRepository.getByUserForDate(userId, lunchDate);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -66,7 +67,7 @@ public class VotingController {
         }
     }
 
-    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody Vote vote, @PathVariable int id) {
         log.info("update vote {} with id={}", vote, id);
@@ -76,9 +77,10 @@ public class VotingController {
     }
 
     @GetMapping("/by-date")
-    public List<Vote> getAllByDate(@RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
-        log.info("get all votes for date");
-        return voteRepository.getAll(DateTimeUtil.setStartDate(lunchDate), DateTimeUtil.setStartDate(lunchDate));
+    public List<Vote> getAllByDate(
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
+        log.info("get all votes for date {}", lunchDate);
+        return voteRepository.getAll(DateTimeUtil.setStartDate(lunchDate), DateTimeUtil.setEndDate(lunchDate));
     }
 }
 

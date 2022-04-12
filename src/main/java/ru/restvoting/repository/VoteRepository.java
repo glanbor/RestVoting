@@ -7,12 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.restvoting.model.Menu;
-import ru.restvoting.model.User;
 import ru.restvoting.model.Vote;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Repository
@@ -21,11 +20,11 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.voteDate >=:startDate " +
             "AND v.voteDate <=:endDate ORDER BY v.voteDate DESC")
-    List<Vote> getAllByUser(int id, LocalDate startDate, LocalDate endDate);
+    List<Vote> getAllByUser(@Param("id") int id, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.userId=:id AND v.voteDate =:lunchDate")
-    Vote getByUserForDate(int id, LocalDate lunchDate);
+    Vote getByUserForDate(@Param("id") int id, @Param("lunchDate") LocalDate lunchDate);
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT v FROM Vote v WHERE v.voteDate >=:startDate " +
@@ -36,5 +35,11 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
     @Modifying
     @Query("DELETE FROM Vote v WHERE v.id=:id")
     int delete(@Param("id") int id);
+
+    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT v FROM Vote v WHERE v.id = ?1")
+    Optional<Vote> get(int id);
+
+
 
 }

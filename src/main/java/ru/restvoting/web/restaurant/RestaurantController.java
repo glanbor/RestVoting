@@ -68,7 +68,7 @@ public class RestaurantController {
     @CacheEvict(value="restaurants", allEntries = true)
     public void delete(@PathVariable int id) {
         log.info("delete restaurant {}", id);
-        ValidationUtil.checkNotFoundWithId(restaurantRepository.delete(id), id);
+        ValidationUtil.checkNotFoundWithId(restaurantRepository.delete(id) !=0, id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

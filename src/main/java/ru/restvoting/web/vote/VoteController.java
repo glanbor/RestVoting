@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,27 +35,29 @@ public class VoteController {
     private final VoteRepository voteRepository;
 
     @GetMapping()
-    public List<Vote> getAll(@RequestParam @Nullable LocalDate startDate,
-                             @RequestParam @Nullable LocalDate endDate,
-                             @RequestParam @Nullable User user) {
-        if (user != null) {
-            log.info("get votes with interval for user {}", user);
-            return voteRepository.getAllByUser(user.id(), DateTimeUtil.setStartDate(startDate), DateTimeUtil.setStartDate(endDate));
+    public List<Vote> getAll(@RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                             @RequestParam @Nullable Integer userId) {
+        if (userId != null) {
+            log.info("get votes with interval for user {}", userId);
+            return voteRepository.getAllByUser(userId, DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
         } else {
             log.info("get all votes with interval");
-            return voteRepository.getAll(DateTimeUtil.setStartDate(startDate), DateTimeUtil.setStartDate(endDate));
+            return voteRepository.getAll(DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Vote> get(@PathVariable int id) {
-        return ValidationUtil.checkNotFoundWithId(ResponseEntity.of(voteRepository.findById(id)), id);
+        log.info("get vote {}", id);
+        return ValidationUtil.checkNotFoundWithId(ResponseEntity.of(voteRepository.get(id)), id);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@RequestBody Vote vote) {
-        ValidationUtil.checkNotFoundWithId(voteRepository.delete(vote.id()), vote.id());
+    public void delete(@PathVariable int id) {
+        log.info("delete vote {}", id);
+        ValidationUtil.checkNotFoundWithId(voteRepository.delete(id) != 0, id);
     }
 
 }

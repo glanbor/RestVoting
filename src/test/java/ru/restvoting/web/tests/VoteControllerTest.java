@@ -14,7 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.data.DishTestData.FR_DISH1_ID;
+import static ru.restvoting.web.data.MenuTestData.MENU1_ID;
 import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
 import static ru.restvoting.web.data.VoteTestData.*;
 
@@ -26,7 +28,10 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .param("startDate", "")
+                .param("endDate", "")
+                .param("userId", ""))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_MATCHER.contentJson(allVotes));
@@ -53,6 +58,7 @@ class VoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> voteRepository.findById(VOTE1_ID));
+        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
+                voteRepository.findById(VOTE1_ID).orElse(null), VOTE1_ID));
     }
 }

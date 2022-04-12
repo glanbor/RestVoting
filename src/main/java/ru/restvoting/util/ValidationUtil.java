@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ValidationUtil {
+
+    public static final LocalTime VOTING_DEADLINE = LocalTime.of(11, 0);
+
     private ValidationUtil() {
     }
 
@@ -48,9 +51,12 @@ public class ValidationUtil {
     }
 
     public static void validateVote(Vote vote) {
-        if (!(vote.getVoteDate().isEqual(LocalDate.now()))
-                || (vote.getVoteDate().isEqual(LocalDate.now()) && LocalTime.now().getHour() > 10)) {
+        if (!vote.getVoteDate().isEqual(LocalDate.now()) || getLocalTime().isAfter(VOTING_DEADLINE)) {
             throw new IllegalDateTimeException("The vote can be accepted only today before 11:00");
         }
+    }
+
+    public static LocalTime getLocalTime() {
+         return LocalTime.now();
     }
 }

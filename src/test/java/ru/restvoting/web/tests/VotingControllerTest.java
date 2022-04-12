@@ -1,26 +1,24 @@
 package ru.restvoting.web.tests;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import ru.restvoting.model.Menu;
 import ru.restvoting.model.Vote;
-import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.repository.VoteRepository;
+import ru.restvoting.util.ValidationUtil;
 import ru.restvoting.web.AbstractControllerTest;
+import ru.restvoting.web.MatcherFactory;
 import ru.restvoting.web.json.JsonUtil;
-import ru.restvoting.web.user.AdminUserController;
 import ru.restvoting.web.vote.VotingController;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mockStatic;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +44,8 @@ class VotingControllerTest extends AbstractControllerTest {
 
     @Test
     void getById() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "by-user-" + USER_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL + "by-user-" + USER_ID)
+                .param("lunchDate", String.valueOf(LocalDate.now())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -57,34 +56,44 @@ class VotingControllerTest extends AbstractControllerTest {
     @Test
     void createWithLocation() throws Exception {
         Vote newVote = getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newVote)))
-                .andExpect(status().isCreated());
+        try (MockedStatic<ValidationUtil> validationUtilMockedStatic = mockStatic(ValidationUtil.class)) {
+            validationUtilMockedStatic.when(ValidationUtil::getLocalTime)
+                    .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
 
-        Vote created = VOTE_MATCHER.readFromJson(action);
-        int newId = created.id();
-        newVote.setId(newId);
-        VOTE_MATCHER.assertMatch(created, newVote);
-        VOTE_MATCHER.assertMatch(voteRepository.getById(newId), newVote);
+            ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(JsonUtil.writeValue(newVote)))
+                    .andExpect(status().isCreated());
+
+            Vote created = VOTE_MATCHER.readFromJson(action);
+            int newId = created.id();
+            newVote.setId(newId);
+            VOTE_MATCHER.assertMatch(created, newVote);
+            VOTE_MATCHER.assertMatch(voteRepository.getById(newId), newVote);
+        }
     }
 
     @Test
     void update() throws Exception {
         Vote updated = getUpdated();
-        updated.setId(null);
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE1_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated)))
-                .andDo(print())
-                .andExpect(status().isNoContent());
+        try (MockedStatic<ValidationUtil> validationUtilMockedStatic = mockStatic(ValidationUtil.class)) {
+            validationUtilMockedStatic.when(ValidationUtil::getLocalTime)
+                    .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
 
-        VOTE_MATCHER.assertMatch(voteRepository.getById(VOTE1_ID), updated);
+            perform(MockMvcRequestBuilders.put(REST_URL + TODAY_VOTE1_ID)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(JsonUtil.writeValue(updated)))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+            MatcherFactory.Matcher<Vote> voteMatcher = VOTE_MATCHER;
+            voteMatcher.assertMatch(voteRepository.getById(TODAY_VOTE1_ID), updated);
+        }
     }
 
     @Test
     void getAllByDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "by-date?date=" + LocalDate.now()))
+        perform(MockMvcRequestBuilders.get(REST_URL + "by-date")
+                .param("lunchDate", String.valueOf(LocalDate.now())))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

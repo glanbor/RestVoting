@@ -43,7 +43,7 @@ public class MenuController {
                              @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                              @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         log.info("get menus for restaurant {} with interval", restaurantId);
-        return menuRepository.getAll(restaurantId, DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
+        return menuRepository.getAllForRestaurant(restaurantId, DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
     }
 
     @GetMapping("/{id}")
