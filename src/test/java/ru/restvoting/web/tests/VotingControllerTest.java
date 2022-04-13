@@ -22,9 +22,11 @@ import static org.mockito.Mockito.mockStatic;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.MENU_WITH_DISHES_MATCHER;
 import static ru.restvoting.web.data.MenuTestData.allTodayMenu;
 import static ru.restvoting.web.data.UserTestData.USER_ID;
+import static ru.restvoting.web.data.UserTestData.user;
 import static ru.restvoting.web.data.VoteTestData.*;
 
 class VotingControllerTest extends AbstractControllerTest {
@@ -35,7 +37,8 @@ class VotingControllerTest extends AbstractControllerTest {
 
     @Test
     void getAllMenusForToday() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .with(userHttpBasic(user)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -45,12 +48,19 @@ class VotingControllerTest extends AbstractControllerTest {
     @Test
     void getById() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "by-user-" + USER_ID)
-                .param("lunchDate", String.valueOf(LocalDate.now())))
+                .param("lunchDate", String.valueOf(LocalDate.now()))
+                .with(userHttpBasic(user)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_MATCHER.contentJson(vote3));
+    }
 
+    @Test
+    void getUnAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "by-user-" + USER_ID)
+                .param("lunchDate", String.valueOf(LocalDate.now())))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -62,6 +72,7 @@ class VotingControllerTest extends AbstractControllerTest {
 
             ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .with(userHttpBasic(user))
                     .content(JsonUtil.writeValue(newVote)))
                     .andExpect(status().isCreated());
 
@@ -82,6 +93,7 @@ class VotingControllerTest extends AbstractControllerTest {
 
             perform(MockMvcRequestBuilders.put(REST_URL + TODAY_VOTE1_ID)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .with(userHttpBasic(user))
                     .content(JsonUtil.writeValue(updated)))
                     .andDo(print())
                     .andExpect(status().isNoContent());
@@ -93,7 +105,8 @@ class VotingControllerTest extends AbstractControllerTest {
     @Test
     void getAllByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "by-date")
-                .param("lunchDate", String.valueOf(LocalDate.now())))
+                .param("lunchDate", String.valueOf(LocalDate.now()))
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

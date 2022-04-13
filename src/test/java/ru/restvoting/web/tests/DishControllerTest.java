@@ -20,7 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
+import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.*;
+import static ru.restvoting.web.data.UserTestData.admin;
+import static ru.restvoting.web.data.UserTestData.user;
 
 
 public class DishControllerTest extends AbstractControllerTest {
@@ -33,7 +36,8 @@ public class DishControllerTest extends AbstractControllerTest {
 
     @Test
     void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -42,11 +46,25 @@ public class DishControllerTest extends AbstractControllerTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + FR_DISH1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL + FR_DISH1_ID)
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(DISH_MATCHER.contentJson(frDish1));
+    }
+
+    @Test
+    void getUnAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getForbidden() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .with(userHttpBasic(user)))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -57,7 +75,8 @@ public class DishControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + FR_DISH1_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + FR_DISH1_ID)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(dishRepository.findById(FR_DISH1_ID).isPresent());
@@ -68,6 +87,7 @@ public class DishControllerTest extends AbstractControllerTest {
         Dish newDish = DishTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(newDish)))
                 .andExpect(status().isCreated());
         Dish created = DISH_MATCHER.readFromJson(action);
@@ -82,6 +102,7 @@ public class DishControllerTest extends AbstractControllerTest {
         Dish updated = DishTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + FR_DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());

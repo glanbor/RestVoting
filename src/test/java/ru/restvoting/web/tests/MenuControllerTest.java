@@ -18,7 +18,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
+import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.*;
+import static ru.restvoting.web.data.UserTestData.admin;
+import static ru.restvoting.web.data.UserTestData.user;
 
 class MenuControllerTest extends AbstractControllerTest {
     private static final String REST_URL =
@@ -31,7 +34,8 @@ class MenuControllerTest extends AbstractControllerTest {
     void getAll() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
                 .param("startDate", "")
-                .param("endDate", ""))
+                .param("endDate", "")
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -40,7 +44,8 @@ class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + MENU1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL + MENU1_ID)
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -48,8 +53,22 @@ class MenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void getUnAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getForbidden() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .with(userHttpBasic(user)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void getWithDishes() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + MENU1_ID + "/with-dishes"))
+        perform(MockMvcRequestBuilders.get(REST_URL + MENU1_ID + "/with-dishes")
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -64,7 +83,8 @@ class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + MENU1_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + MENU1_ID)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> checkNotFoundWithId(menuRepository.findById(MENU1_ID).orElse(null), MENU1_ID));
@@ -75,6 +95,7 @@ class MenuControllerTest extends AbstractControllerTest {
         Menu newMenu = MenuTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(newMenu)))
                 .andExpect(status().isCreated());
         Menu created = MENU_WITH_DISHES_MATCHER.readFromJson(action);
@@ -89,6 +110,7 @@ class MenuControllerTest extends AbstractControllerTest {
         Menu updated = MenuTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());

@@ -15,9 +15,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
+import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.FR_DISH1_ID;
 import static ru.restvoting.web.data.MenuTestData.MENU1_ID;
-import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
+import static ru.restvoting.web.data.UserTestData.*;
 import static ru.restvoting.web.data.VoteTestData.*;
 
 class VoteControllerTest extends AbstractControllerTest {
@@ -31,7 +32,8 @@ class VoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL)
                 .param("startDate", "")
                 .param("endDate", "")
-                .param("userId", ""))
+                .param("userId", "")
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(VOTE_MATCHER.contentJson(allVotes));
@@ -39,7 +41,8 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + VOTE1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL + VOTE1_ID)
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -47,15 +50,30 @@ class VoteControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void getUnAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getForbidden() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .with(userHttpBasic(user)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + VOTE_NOT_FOUND))
+        perform(MockMvcRequestBuilders.get(REST_URL + VOTE_NOT_FOUND)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + VOTE1_ID)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> checkNotFoundWithId(

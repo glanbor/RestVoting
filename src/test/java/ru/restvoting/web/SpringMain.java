@@ -27,7 +27,7 @@ public class SpringMain {
 //            adminUserController.createWithLocation(
 //                    new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
 //            System.out.println();
-
+//            mockAuthorize(user);
 //            MealRestController mealController = appCtx.getBean(MealRestController.class);
 //            List<MealTo> filteredMealsWithExcess =
 //                    mealController.getBetween(
