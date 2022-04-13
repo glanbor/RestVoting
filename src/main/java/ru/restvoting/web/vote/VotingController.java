@@ -19,6 +19,7 @@ import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
 import ru.restvoting.util.exception.AlreadyFoundException;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -52,7 +53,7 @@ public class VotingController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> createWithLocation(@RequestBody Vote vote) {
+    public ResponseEntity<Vote> createWithLocation(@Valid @RequestBody Vote vote) {
         log.info("create {}", vote);
         checkNew(vote);
         validateVote(vote);
@@ -69,7 +70,7 @@ public class VotingController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody Vote vote, @PathVariable int id) {
+    public void update(@Valid @RequestBody Vote vote, @PathVariable int id) {
         log.info("update vote {} with id={}", vote, id);
         ValidationUtil.assureIdConsistent(vote, id);
         ValidationUtil.validateVote(vote);

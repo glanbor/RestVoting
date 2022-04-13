@@ -58,9 +58,7 @@ public class RestaurantController {
     @GetMapping("/{id}")
     public Restaurant get(@PathVariable int id) {
         log.info("get restaurant {}", id);
-        Restaurant restaurant = ValidationUtil.checkNotFoundWithId(
-                restaurantRepository.findById(id).orElse(null), id);
-        return restaurant;
+        return ValidationUtil.checkNotFoundWithId(restaurantRepository.findById(id).orElse(null), id);
     }
 
     @DeleteMapping("/{id}")
@@ -73,7 +71,7 @@ public class RestaurantController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(value="restaurants", allEntries = true)
-    public ResponseEntity<Restaurant> create(@RequestBody Restaurant restaurant) {
+    public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
         log.info("create restaurant {}", restaurant);
         checkNew(restaurant);
         Restaurant created = restaurantRepository.save(restaurant);

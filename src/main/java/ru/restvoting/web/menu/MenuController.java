@@ -19,6 +19,7 @@ import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -70,7 +71,7 @@ public class MenuController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(value="menus", allEntries = true)
-    public ResponseEntity<Menu> createWithLocation(@RequestBody Menu menu, @PathVariable int restaurantId) {
+    public ResponseEntity<Menu> createWithLocation(@Valid @RequestBody Menu menu, @PathVariable int restaurantId) {
         log.info("create menu {} for restaurant {}", menu, restaurantId);
         checkNew(menu);
         Restaurant restaurant = restaurantRepository.getById(restaurantId);
@@ -86,7 +87,7 @@ public class MenuController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(value="menus", allEntries = true)
-    public void update(@RequestBody Menu menu, @PathVariable int id, @PathVariable int restaurantId) {
+    public void update(@Valid @RequestBody Menu menu, @PathVariable int id, @PathVariable int restaurantId) {
         log.info("update menu {} with id={} for restaurant {}", menu, id, restaurantId);
         ValidationUtil.assureIdConsistent(menu, id);
         menu.setRestaurant(restaurantRepository.getById(restaurantId));
