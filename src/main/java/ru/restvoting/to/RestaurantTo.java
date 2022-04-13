@@ -2,6 +2,7 @@ package ru.restvoting.to;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
+import ru.restvoting.HasId;
 import ru.restvoting.model.Vote;
 
 import javax.validation.constraints.NotBlank;
@@ -11,11 +12,9 @@ import java.beans.ConstructorProperties;
 import java.util.List;
 
 @Value
-@EqualsAndHashCode
-@ToString
-public class RestaurantTo {
-
-    Integer Id;
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class RestaurantTo extends BaseTo {
 
     @NotBlank
     @Size(min = 2, max = 50)
@@ -29,7 +28,7 @@ public class RestaurantTo {
 
     @ConstructorProperties({"id", "name", "voteList", "votesAmount"})
     public RestaurantTo(Integer id, String name, List<Vote> voteList, int votesAmount) {
-        Id = id;
+        super(id);
         this.name = name;
         this.voteList = voteList;
         this.votesAmount = votesAmount;

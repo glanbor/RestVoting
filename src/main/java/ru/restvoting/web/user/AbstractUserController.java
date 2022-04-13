@@ -3,17 +3,12 @@ package ru.restvoting.web.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.restvoting.model.User;
 import ru.restvoting.repository.UserRepository;
+import ru.restvoting.to.UserTo;
+import ru.restvoting.util.UserUtil;
 
 import java.util.List;
 
@@ -45,6 +40,13 @@ public abstract class AbstractUserController {
     public void delete(int id) {
         log.info("delete {}", id);
         checkNotFoundWithId(userRepository.delete(id), id);
+    }
+
+    public void update(UserTo userTo, int id) {
+        log.info("update {} with id={}", userTo, id);
+        assureIdConsistent(userTo, id);
+        User user = checkNotFoundWithId(userRepository.findById(id).orElse(null), id);
+        UserUtil.updateFromTo(user, userTo);
     }
 
     public void update(User user, int id) {
