@@ -9,17 +9,15 @@ import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.vote.VoteController;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
-import static ru.restvoting.web.data.DishTestData.FR_DISH1_ID;
-import static ru.restvoting.web.data.MenuTestData.MENU1_ID;
 import static ru.restvoting.web.data.UserTestData.*;
 import static ru.restvoting.web.data.VoteTestData.*;
+import static ru.restvoting.web.data.VoteTestData.NOT_FOUND;
 
 class VoteControllerTest extends AbstractControllerTest {
     private static final String REST_URL = VoteController.REST_URL + "/";
@@ -64,10 +62,10 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + VOTE_NOT_FOUND)
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
                 .with(userHttpBasic(admin)))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -78,5 +76,13 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
                 voteRepository.findById(VOTE1_ID).orElse(null), VOTE1_ID));
+    }
+
+    @Test
+    void deleteNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 }

@@ -64,10 +64,10 @@ class AdminUserControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(userRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
-//        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
-//                .andDo(print())
-//                .andExpect(status().isNotFound());
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -89,6 +89,14 @@ class AdminUserControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void deleteNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void update() throws Exception {
         User updated = UserTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
@@ -98,6 +106,17 @@ class AdminUserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
 
         USER_MATCHER.assertMatch(userRepository.getById(USER_ID), updated);
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        User invalid = new User(null, "invalid", null, "newPassword");
+        perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(invalid, "newPassword")))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

@@ -27,7 +27,7 @@ public abstract class AbstractUserController {
 
     public User get(int id) {
         log.info("get {}", id);
-        return userRepository.findById(id).orElse(null);
+        return checkNotFoundWithId(userRepository.findById(id).orElse(null), id);
     }
 
     public User create(User user) {
@@ -39,7 +39,7 @@ public abstract class AbstractUserController {
 
     public void delete(int id) {
         log.info("delete {}", id);
-        checkNotFoundWithId(userRepository.delete(id), id);
+        checkNotFoundWithId(userRepository.delete(id) !=0, id);
     }
 
     public void update(UserTo userTo, int id) {

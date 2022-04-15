@@ -1,6 +1,7 @@
 package ru.restvoting.to;
 
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.Value;
 
@@ -12,6 +13,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Value
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class UserTo extends BaseTo implements Serializable {

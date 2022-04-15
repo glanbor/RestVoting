@@ -1,5 +1,7 @@
 package ru.restvoting.util;
 
+import org.springframework.core.NestedExceptionUtils;
+import org.springframework.lang.NonNull;
 import ru.restvoting.HasId;
 import ru.restvoting.model.AbstractBaseEntity;
 import ru.restvoting.model.Vote;
@@ -59,5 +61,16 @@ public class ValidationUtil {
 
     public static LocalTime getLocalTime() {
          return LocalTime.now();
+    }
+
+    //  https://stackoverflow.com/a/65442410/548473
+    @NonNull
+    public static Throwable getRootCause(@NonNull Throwable t) {
+        Throwable rootCause = NestedExceptionUtils.getRootCause(t);
+        return rootCause != null ? rootCause : t;
+    }
+
+    public static String getMessage(Throwable e) {
+        return e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.getClass().getName();
     }
 }

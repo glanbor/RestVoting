@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.*;
+import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.admin;
 import static ru.restvoting.web.data.UserTestData.user;
 
@@ -68,9 +69,17 @@ public class DishControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getNotFound() throws Exception {
+    void getNotFound2() throws Exception {
         assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
                 dishRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
+    }
+
+    @Test
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -80,6 +89,14 @@ public class DishControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(dishRepository.findById(FR_DISH1_ID).isPresent());
+    }
+
+    @Test
+    void deleteNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

@@ -5,7 +5,7 @@ import ru.restvoting.to.UserTo;
 import ru.restvoting.util.UserUtil;
 
 import java.io.Serial;
-import java.util.Collection;
+
 
 public class AuthorizedUser extends org.springframework.security.core.userdetails.User {
     @Serial

@@ -20,6 +20,7 @@ import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.FR_DISH1_ID;
 import static ru.restvoting.web.data.RestaurantTestData.*;
+import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.admin;
 import static ru.restvoting.web.data.UserTestData.user;
 import static ru.restvoting.web.data.VoteTestData.allVotes;
@@ -69,9 +70,17 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
-                restaurantRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
+
+//    @Test
+//    void getNotFound2() throws Exception {
+//        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
+//                restaurantRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
+//    }
 
     @Test
     void delete() throws Exception {
@@ -82,6 +91,13 @@ class RestaurantControllerTest extends AbstractControllerTest {
         assertFalse(restaurantRepository.findById(FR_DISH1_ID).isPresent());
     }
 
+    @Test
+    void deleteNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
 
     @Test
     void create() throws Exception {

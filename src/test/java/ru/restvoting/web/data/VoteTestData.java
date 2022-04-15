@@ -15,7 +15,7 @@ public class VoteTestData {
 
     public static final int VOTE1_ID = START_SEQ + 34;
     public static final int TODAY_VOTE1_ID = VOTE1_ID + 2;
-    public static final int VOTE_NOT_FOUND = 10;
+    public static final int NOT_FOUND = 10;
 
     public static final Vote vote1 = new Vote(VOTE1_ID, LocalDate.of(2022, 03, 01), 100000, restaurantUkraine);
     public static final Vote vote2 = new Vote(VOTE1_ID+1, LocalDate.of(2022, 03, 01), 100001, restaurantUkraine);

@@ -48,18 +48,17 @@ public class VoteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vote> get(@PathVariable int id) {
+    public Vote get(@PathVariable int id) {
         log.info("get vote {}", id);
-        return ValidationUtil.checkNotFoundWithId(ResponseEntity.of(voteRepository.get(id)), id);
+        return checkNotFoundWithId(voteRepository.get(id).orElse(null), id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         log.info("delete vote {}", id);
-        ValidationUtil.checkNotFoundWithId(voteRepository.delete(id) != 0, id);
+        checkNotFoundWithId(voteRepository.delete(id) != 0, id);
     }
-
 }
 
 

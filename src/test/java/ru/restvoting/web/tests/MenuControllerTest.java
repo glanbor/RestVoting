@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.*;
+import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.admin;
 import static ru.restvoting.web.data.UserTestData.user;
 
@@ -77,8 +78,10 @@ class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     void getNotFound() throws Exception {
-        assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
-                menuRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
+        perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -88,6 +91,14 @@ class MenuControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> checkNotFoundWithId(menuRepository.findById(MENU1_ID).orElse(null), MENU1_ID));
+    }
+
+    @Test
+    void deleteNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND)
+                .with(userHttpBasic(admin)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
