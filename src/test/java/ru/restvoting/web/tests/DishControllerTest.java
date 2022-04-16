@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.restvoting.model.Dish;
+import ru.restvoting.model.User;
 import ru.restvoting.repository.DishRepository;
 
 import ru.restvoting.util.exception.NotFoundException;
@@ -22,9 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.*;
-import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
-import static ru.restvoting.web.data.UserTestData.admin;
-import static ru.restvoting.web.data.UserTestData.user;
+import static ru.restvoting.web.data.DishTestData.NOT_FOUND;
+import static ru.restvoting.web.data.UserTestData.*;
 
 
 public class DishControllerTest extends AbstractControllerTest {
@@ -115,6 +115,17 @@ public class DishControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void createInvalid() throws Exception {
+        Dish invalid = new Dish(null, "", 10, null);
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void update() throws Exception {
         Dish updated = DishTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + FR_DISH1_ID)
@@ -126,5 +137,14 @@ public class DishControllerTest extends AbstractControllerTest {
         DISH_MATCHER.assertMatch(dishRepository.getById(FR_DISH1_ID), updated);
     }
 
-
+    @Test
+    void updateInvalid() throws Exception {
+        Dish invalid = new Dish(FR_DISH1_ID, "Invalid", 0.0, null);
+        perform(MockMvcRequestBuilders.put(REST_URL + FR_DISH1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
 }

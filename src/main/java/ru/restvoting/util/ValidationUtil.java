@@ -11,6 +11,8 @@ import ru.restvoting.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static ru.restvoting.util.DateTimeUtil.getLocalTime;
+
 public class ValidationUtil {
 
     public static final LocalTime VOTING_DEADLINE = LocalTime.of(11, 0);
@@ -38,9 +40,9 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkNew(AbstractBaseEntity entity) {
-        if (!entity.isNew()) {
-            throw new IllegalArgumentException(entity + " must be new (id=null)");
+    public static void checkNew(HasId bean) {
+        if (!bean.isNew()) {
+            throw new IllegalArgumentException(bean + " must be new (id=null)");
         }
     }
 
@@ -54,14 +56,14 @@ public class ValidationUtil {
     }
 
     public static void validateVote(Vote vote) {
-        if (!vote.getVoteDate().isEqual(LocalDate.now()) || getLocalTime().isAfter(VOTING_DEADLINE)) {
+        if (!vote.getVoteDate().isEqual(LocalDate.now()) || DateTimeUtil.getLocalTime().isAfter(VOTING_DEADLINE)) {
             throw new IllegalDateTimeException("The vote can be accepted only today before 11:00");
         }
     }
 
-    public static LocalTime getLocalTime() {
-         return LocalTime.now();
-    }
+//    public static LocalTime getLocalTime() {
+//         return LocalTime.now();
+//    }
 
     //  https://stackoverflow.com/a/65442410/548473
     @NonNull

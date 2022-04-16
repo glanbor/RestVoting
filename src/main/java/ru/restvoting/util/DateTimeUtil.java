@@ -41,4 +41,7 @@ public class DateTimeUtil {
         return StringUtils.hasLength(str) ? LocalTime.parse(str) : null;
     }
 
+    public static LocalTime getLocalTime() {
+        return LocalTime.now();
+    }
 }

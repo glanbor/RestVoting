@@ -10,7 +10,6 @@ import ru.restvoting.repository.UserRepository;
 import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.UserTestData;
-import ru.restvoting.web.json.JsonUtil;
 import ru.restvoting.web.user.AdminUserController;
 
 
@@ -102,7 +101,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
-                .content(JsonUtil.writeValue(updated)))
+                .content(jsonWithPassword(updated, updated.getPassword())))
                 .andExpect(status().isNoContent());
 
         USER_MATCHER.assertMatch(userRepository.getById(USER_ID), updated);
@@ -125,7 +124,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
-                .content(JsonUtil.writeValue(newUser)))
+                .content(jsonWithPassword(newUser, newUser.getPassword())))
                 .andExpect(status().isCreated());
 
         User created = USER_MATCHER.readFromJson(action);
@@ -133,6 +132,17 @@ class AdminUserControllerTest extends AbstractControllerTest {
         newUser.setId(newId);
         USER_MATCHER.assertMatch(created, newUser);
         USER_MATCHER.assertMatch(checkNotFoundWithId(userRepository.findById(newId).orElse(null), newId), newUser);
+    }
+
+    @Test
+    void createInvalid() throws Exception {
+        User invalid = new User(null, "invalid", null, "newPassword");
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(invalid, "newPassword")))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.restvoting.model.Dish;
 import ru.restvoting.model.Menu;
 import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.util.exception.NotFoundException;
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
+import static ru.restvoting.web.data.DishTestData.FR_DISH1_ID;
 import static ru.restvoting.web.data.MenuTestData.*;
 import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.admin;
@@ -117,6 +119,17 @@ class MenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void createInvalid() throws Exception {
+        Menu invalid = new Menu(null, null, null, null);
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void update() throws Exception {
         Menu updated = MenuTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID)
@@ -127,5 +140,16 @@ class MenuControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
 
         MENU_WITH_DISHES_MATCHER.assertMatch(menuRepository.getById(MENU1_ID), updated);
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        Menu invalid = new Menu(MENU1_ID, null, null, null);
+        perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 }

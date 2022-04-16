@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.restvoting.model.Dish;
 import ru.restvoting.model.Restaurant;
 import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.util.RestaurantUtil;
 import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
+import ru.restvoting.web.json.JsonUtil;
 import ru.restvoting.web.restaurant.RestaurantController;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -115,6 +117,17 @@ class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void createInvalid() throws Exception {
+        Restaurant invalid = new Restaurant(null, "");
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void update() throws Exception {
         Restaurant updated = getUpdated();
         updated.setId(null);
@@ -125,5 +138,16 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
         RESTAURANT_MATCHER.assertMatch(restaurantRepository.getById(RESTAURANT1_ID), getUpdated());
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        Restaurant invalid = new Restaurant(RESTAURANT1_ID, "");
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 }

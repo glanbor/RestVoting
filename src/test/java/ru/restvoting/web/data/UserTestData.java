@@ -12,7 +12,7 @@ import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered");
+            MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered", "password");
 
     public static final int USER_ID = START_SEQ;
     public static final int ADMIN_ID = START_SEQ + 2;

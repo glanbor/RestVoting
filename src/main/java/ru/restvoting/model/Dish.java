@@ -22,7 +22,7 @@ public class Dish extends AbstractNamedEntity {
     
     @Column(name = "price", nullable = false)
     @NotNull
-    @Range(min = 0, max = 10000)
+    @Range(min = 1, max = 10000)
     private double price;
 
     @ManyToOne(fetch = FetchType.LAZY)

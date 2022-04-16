@@ -9,9 +9,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.restvoting.model.Vote;
 import ru.restvoting.repository.VoteRepository;
+import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.MatcherFactory;
+import ru.restvoting.web.data.VoteTestData;
 import ru.restvoting.web.json.JsonUtil;
 import ru.restvoting.web.vote.VotingController;
 
@@ -25,8 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.MENU_WITH_DISHES_MATCHER;
 import static ru.restvoting.web.data.MenuTestData.allTodayMenu;
-import static ru.restvoting.web.data.UserTestData.USER_ID;
-import static ru.restvoting.web.data.UserTestData.user;
+import static ru.restvoting.web.data.UserTestData.*;
 import static ru.restvoting.web.data.VoteTestData.*;
 
 class VotingControllerTest extends AbstractControllerTest {
@@ -65,9 +66,9 @@ class VotingControllerTest extends AbstractControllerTest {
 
     @Test
     void createWithLocation() throws Exception {
-        Vote newVote = getNew();
-        try (MockedStatic<ValidationUtil> validationUtilMockedStatic = mockStatic(ValidationUtil.class)) {
-            validationUtilMockedStatic.when(ValidationUtil::getLocalTime)
+        Vote newVote = VoteTestData.getNew();
+        try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
+            dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
                     .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
 
             ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
@@ -85,10 +86,25 @@ class VotingControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void createInvalidTime() throws Exception {
+        Vote invalid = VoteTestData.getNew();
+        try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
+            dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
+                    .thenReturn(ValidationUtil.VOTING_DEADLINE.plus(1, ChronoUnit.HOURS));
+
+            perform(MockMvcRequestBuilders.post(REST_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(userHttpBasic(user))
+                    .content(JsonUtil.writeValue(invalid)))
+                    .andExpect(status().isUnprocessableEntity());
+        }
+    }
+
+    @Test
     void update() throws Exception {
-        Vote updated = getUpdated();
-        try (MockedStatic<ValidationUtil> validationUtilMockedStatic = mockStatic(ValidationUtil.class)) {
-            validationUtilMockedStatic.when(ValidationUtil::getLocalTime)
+        Vote updated = VoteTestData.getUpdated();
+        try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
+            dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
                     .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
 
             perform(MockMvcRequestBuilders.put(REST_URL + TODAY_VOTE1_ID)
@@ -99,6 +115,22 @@ class VotingControllerTest extends AbstractControllerTest {
                     .andExpect(status().isNoContent());
             MatcherFactory.Matcher<Vote> voteMatcher = VOTE_MATCHER;
             voteMatcher.assertMatch(voteRepository.getById(TODAY_VOTE1_ID), updated);
+        }
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        Vote updated = VoteTestData.getUpdated();
+        try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
+            dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
+                    .thenReturn(ValidationUtil.VOTING_DEADLINE.plus(1, ChronoUnit.HOURS));
+
+            perform(MockMvcRequestBuilders.put(REST_URL + TODAY_VOTE1_ID)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(userHttpBasic(user))
+                    .content(JsonUtil.writeValue(updated)))
+                    .andDo(print())
+                    .andExpect(status().isUnprocessableEntity());
         }
     }
 
