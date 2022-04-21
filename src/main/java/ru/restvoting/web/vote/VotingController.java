@@ -57,16 +57,28 @@ public class VotingController {
         log.info("create {}", vote);
         checkNew(vote);
         validateVote(vote);
-        if (voteRepository.getAllByUser(vote.getUserId(), LocalDate.now(), LocalDate.now()).size() == 0) {
             Vote created = voteRepository.save(vote);
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path(REST_URL + "/{id}")
                     .buildAndExpand(created.getId()).toUri();
             return ResponseEntity.created(uriOfNewResource).body(created);
-        } else {
-            throw new AlreadyFoundException("The vote fot User with id " + vote.getUserId() + " already exists");
-        }
     }
+
+//    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Vote> createWithLocation(@Valid @RequestBody Vote vote) {
+//        log.info("create {}", vote);
+//        checkNew(vote);
+//        validateVote(vote);
+//        if (voteRepository.getAllByUser(vote.getUserId(), LocalDate.now(), LocalDate.now()).size() == 0) {
+//            Vote created = voteRepository.save(vote);
+//            URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                    .path(REST_URL + "/{id}")
+//                    .buildAndExpand(created.getId()).toUri();
+//            return ResponseEntity.created(uriOfNewResource).body(created);
+//        } else {
+//            throw new AlreadyFoundException("The vote fot User with id " + vote.getUserId() + " already exists");
+//        }
+//    }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)

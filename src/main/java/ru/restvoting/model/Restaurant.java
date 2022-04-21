@@ -17,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @ToString(callSuper = true, exclude = {"dishList", "menuList", "voteList"})
 @Entity
-@Table(name = "restaurant")
+@Table(name = "restaurant", uniqueConstraints =
+        {@UniqueConstraint(columnNames = "name", name = "unique_name_for_restaurant_idx")})
 public class Restaurant extends AbstractNamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
@@ -26,6 +27,7 @@ public class Restaurant extends AbstractNamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @JsonManagedReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Menu> menuList;
 
     @JsonManagedReference

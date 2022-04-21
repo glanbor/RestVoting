@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.restvoting.model.Dish;
-import ru.restvoting.model.User;
 import ru.restvoting.repository.DishRepository;
 
 import ru.restvoting.util.exception.NotFoundException;
@@ -21,9 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
+import static ru.restvoting.util.exception.ErrorType.VALIDATION_ERROR;
+import static ru.restvoting.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_DISH;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.*;
 import static ru.restvoting.web.data.DishTestData.NOT_FOUND;
+import static ru.restvoting.web.data.RestaurantTestData.restaurantFrance;
 import static ru.restvoting.web.data.UserTestData.*;
 
 
@@ -116,13 +120,29 @@ public class DishControllerTest extends AbstractControllerTest {
 
     @Test
     void createInvalid() throws Exception {
-        Dish invalid = new Dish(null, "", 10, null);
+        Dish invalid = new Dish(null, "", 10, restaurantFrance);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createDuplicate() throws Exception {
+        Dish duplicate = DishTestData.getNew();
+        duplicate.setName(frDish1.getName());
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(duplicate)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR))
+                .andExpect(detailMessage(EXCEPTION_DUPLICATE_DISH));
     }
 
     @Test
@@ -138,13 +158,30 @@ public class DishControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void updateDuplicate() throws Exception {
+        Dish duplicate = DishTestData.getUpdated();
+        duplicate.setName(frDish2.getName());
+        perform(MockMvcRequestBuilders.put(REST_URL + FR_DISH1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(duplicate)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR))
+                .andExpect(detailMessage(EXCEPTION_DUPLICATE_DISH));
+    }
+
+
+    @Test
     void updateInvalid() throws Exception {
-        Dish invalid = new Dish(FR_DISH1_ID, "Invalid", 0.0, null);
+        Dish invalid = new Dish(FR_DISH1_ID, "Invalid", 0.0, restaurantFrance);
         perform(MockMvcRequestBuilders.put(REST_URL + FR_DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
     }
 }

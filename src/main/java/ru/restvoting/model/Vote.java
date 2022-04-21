@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @ToString(callSuper = true)
 @Entity
 @Table(name="vote", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"vote_date", "user_id"}, name = "unique_date_for_user_idx")})
+        columnNames = {"vote_date", "user_id"}, name = "unique_vote_date_for_user_idx")})
 public class Vote extends AbstractBaseEntity {
 
     @Column(name = "vote_date", nullable = false)

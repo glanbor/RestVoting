@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.restvoting.model.Dish;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.restvoting.model.Menu;
 import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.util.exception.NotFoundException;
@@ -19,9 +20,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
+import static ru.restvoting.util.exception.ErrorType.VALIDATION_ERROR;
+import static ru.restvoting.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_MENU;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
-import static ru.restvoting.web.data.DishTestData.FR_DISH1_ID;
 import static ru.restvoting.web.data.MenuTestData.*;
+import static ru.restvoting.web.data.RestaurantTestData.restaurantUSA;
 import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.admin;
 import static ru.restvoting.web.data.UserTestData.user;
@@ -110,6 +113,7 @@ class MenuControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(newMenu)))
+                .andDo(print())
                 .andExpect(status().isCreated());
         Menu created = MENU_WITH_DISHES_MATCHER.readFromJson(action);
         int newId = created.id();
@@ -119,14 +123,29 @@ class MenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createDuplicate() throws Exception {
+        Menu duplicate = MenuTestData.getDuplicate();
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(duplicate)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR))
+                .andExpect(detailMessage(EXCEPTION_DUPLICATE_MENU));
+    }
+
+    @Test
     void createInvalid() throws Exception {
-        Menu invalid = new Menu(null, null, null, null);
+        Menu invalid = new Menu(null, null, restaurantUSA, null);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
     }
 
     @Test
@@ -138,18 +157,18 @@ class MenuControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-
         MENU_WITH_DISHES_MATCHER.assertMatch(menuRepository.getById(MENU1_ID), updated);
     }
 
     @Test
     void updateInvalid() throws Exception {
-        Menu invalid = new Menu(MENU1_ID, null, null, null);
+        Menu invalid = new Menu(MENU1_ID, null, restaurantUSA, null);
         perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
     }
 }

@@ -15,10 +15,10 @@ FROM users;
 ALTER SEQUENCE GLOBAL_SEQ RESTART WITH 100000;
 
 INSERT INTO users (name, email, password)
-VALUES ('User', 'user@gmail.com', 'user'),
-       ('User2', 'user2@gmail.com', 'user2'),
-       ('Admin', 'admin@gmail.com', 'admin'),
-       ('Guest', 'guest@gmail.com', 'guest');
+VALUES ('User', 'user@gmail.com', '{noop}user'),
+       ('User2', 'user2@gmail.com', '{noop}user2'),
+       ('Admin', 'admin@gmail.com', '{noop}admin'),
+       ('Guest', 'guest@gmail.com', '{noop}guest');
 
 INSERT INTO user_roles (role, user_id)
 VALUES ('USER', 100000),

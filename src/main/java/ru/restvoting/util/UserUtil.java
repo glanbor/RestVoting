@@ -1,5 +1,6 @@
 package ru.restvoting.util;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.restvoting.model.Role;
 import ru.restvoting.model.User;
 import ru.restvoting.to.UserTo;
@@ -20,6 +21,12 @@ public class UserUtil {
         user.setName(userTo.getName());
         user.setEmail(userTo.getEmail().toLowerCase());
         user.setPassword(userTo.getPassword());
+        return user;
+    }
+
+    public static User prepareToSave(User user, PasswordEncoder passwordEncoder) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEmail(user.getEmail().toLowerCase());
         return user;
     }
 }

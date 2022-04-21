@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "menu", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"restaurant_id", "menu_date"}, name = "unique_restaurant_for_date_idx")})
+        columnNames = {"menu_date", "restaurant_id",}, name = "unique_menu_date_for_restaurant_idx")})
 @Setter
 @Getter
 @NoArgsConstructor
@@ -26,7 +26,6 @@ public class Menu extends AbstractBaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
-
     @JsonBackReference
     private Restaurant restaurant;
 

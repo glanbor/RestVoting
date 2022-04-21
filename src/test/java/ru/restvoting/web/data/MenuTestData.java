@@ -59,10 +59,14 @@ public class MenuTestData {
     public static final List<Menu> allTodayMenu = List.of(menuUSA3, menuItalia3, menuUkraine3, menuFrance3);
 
     public static Menu getNew() {
+        return new Menu(null, LocalDate.now().plusDays(1), restaurantUSA, dishesForUSAMenu3);
+    }
+
+    public static Menu getDuplicate() {
         return new Menu(null, LocalDate.now(), restaurantUSA, dishesForUSAMenu3);
     }
 
     public static Menu getUpdated() {
-        return new Menu(MENU1_ID, LocalDate.now(), restaurantUSA, dishesForUSAMenu3);
+        return new Menu(MENU1_ID, LocalDate.now().plusDays(1), restaurantUSA, dishesForUSAMenu3);
     }
 }

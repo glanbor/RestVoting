@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "dish", uniqueConstraints = {@UniqueConstraint(
-        columnNames = {"name", "restaurant_id"}, name = "unique_restaurant_for_dish_idx")})
+        columnNames = {"name", "restaurant_id"}, name = "unique_dish_name_for_restaurant_idx")})
 @Setter
 @Getter
 @NoArgsConstructor

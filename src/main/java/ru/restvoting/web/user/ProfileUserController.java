@@ -3,12 +3,16 @@ package ru.restvoting.web.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.model.User;
 import ru.restvoting.to.UserTo;
 
 import javax.validation.Valid;
+
+import java.net.URI;
 
 import static ru.restvoting.web.SecurityUtil.authUserId;
 
@@ -26,6 +30,15 @@ public class ProfileUserController extends AbstractUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete() {
         super.delete(authUserId());
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<User> register(@Valid @RequestBody UserTo userTo) {
+        User created = super.create(userTo);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL).build().toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

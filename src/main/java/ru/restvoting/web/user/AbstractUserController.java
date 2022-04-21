@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 import ru.restvoting.model.User;
 import ru.restvoting.repository.UserRepository;
@@ -12,6 +14,7 @@ import ru.restvoting.util.UserUtil;
 
 import java.util.List;
 
+import static ru.restvoting.util.UserUtil.prepareToSave;
 import static ru.restvoting.util.ValidationUtil.*;
 
 public abstract class AbstractUserController {
@@ -19,6 +22,8 @@ public abstract class AbstractUserController {
 
     @Autowired
     protected UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();;
 
     public List<User> getAll() {
         log.info("getAll");
@@ -35,6 +40,14 @@ public abstract class AbstractUserController {
         checkNew(user);
         Assert.notNull(user, "user must not be null");
         return userRepository.save(user);
+    }
+
+    public User create(UserTo userTo) {
+        log.info("create {}", userTo);
+        checkNew(userTo);
+        User newFromTo = UserUtil.createNewFromTo(userTo);
+        Assert.notNull(newFromTo, "user must not be null");
+        return prepareAndSave(newFromTo);
     }
 
     public void delete(int id) {
@@ -60,5 +73,7 @@ public abstract class AbstractUserController {
         return userRepository.getByEmail(email);
     }
 
-
+    private User prepareAndSave(User user) {
+        return userRepository.save(prepareToSave(user, passwordEncoder));
+    }
 }
