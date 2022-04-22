@@ -58,11 +58,12 @@ public class VotingController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Vote> createWithLocation(@Valid @RequestBody Vote vote,
+                                                   @RequestParam int restaurantId,
                                                    @AuthenticationPrincipal AuthorizedUser authUser) {
         log.info("create vote for user {}", authUser);
         checkNew(vote);
         validateVote(vote);
-
+        vote.setRestaurant(restaurantRepository.getById(restaurantId));
         Vote created = voteRepository.save(vote);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -89,10 +90,12 @@ public class VotingController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Vote vote, @PathVariable int id,
+                       @RequestParam int restaurantId,
                        @AuthenticationPrincipal AuthorizedUser authUser) {
         log.info("update vote {} with id={}", vote, id);
         ValidationUtil.assureIdConsistent(vote, id);
         ValidationUtil.validateVote(vote);
+        vote.setRestaurant(restaurantRepository.getById(restaurantId));
         voteRepository.save(vote);
     }
 

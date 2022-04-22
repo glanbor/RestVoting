@@ -34,6 +34,7 @@ import static ru.restvoting.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_VOTE;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.MENU_WITH_DISHES_MATCHER;
 import static ru.restvoting.web.data.MenuTestData.allTodayMenu;
+import static ru.restvoting.web.data.RestaurantTestData.RESTAURANT_FR_ID;
 import static ru.restvoting.web.data.RestaurantTestData.restaurantUkraine;
 import static ru.restvoting.web.data.UserTestData.*;
 import static ru.restvoting.web.data.VoteTestData.*;
@@ -80,6 +81,7 @@ class VotingControllerTest extends AbstractControllerTest {
                     .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
 
             ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                    .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(userHttpBasic(user2))
                     .content(JsonUtil.writeValue(newVote)))
@@ -102,6 +104,7 @@ class VotingControllerTest extends AbstractControllerTest {
 
             perform(MockMvcRequestBuilders.post(REST_URL)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
                     .with(userHttpBasic(user))
                     .content(JsonUtil.writeValue(invalid)))
                     .andExpect(status().isUnprocessableEntity())
@@ -118,6 +121,7 @@ class VotingControllerTest extends AbstractControllerTest {
             dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
                     .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
             perform(MockMvcRequestBuilders.post(REST_URL)
+                    .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(userHttpBasic(user))
                     .content(JsonUtil.writeValue(duplicate)))
@@ -136,6 +140,7 @@ class VotingControllerTest extends AbstractControllerTest {
 
             perform(MockMvcRequestBuilders.put(REST_URL + TODAY_VOTE1_ID)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
                     .with(userHttpBasic(user))
                     .content(JsonUtil.writeValue(updated)))
                     .andDo(print())
@@ -154,6 +159,7 @@ class VotingControllerTest extends AbstractControllerTest {
 
             perform(MockMvcRequestBuilders.put(REST_URL + TODAY_VOTE1_ID)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
                     .with(userHttpBasic(user))
                     .content(JsonUtil.writeValue(updated)))
                     .andDo(print())

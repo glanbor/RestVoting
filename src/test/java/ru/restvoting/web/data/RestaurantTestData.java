@@ -16,11 +16,12 @@ public class RestaurantTestData {
 
     public static final int NOT_FOUND = 10;
     public static final int RESTAURANT1_ID = START_SEQ + 4;
+    public static final int RESTAURANT_FR_ID = START_SEQ + 7;
 
     public static final Restaurant restaurantUSA = new Restaurant(RESTAURANT1_ID, "USA");
     public static final Restaurant restaurantItalia = new Restaurant(RESTAURANT1_ID+1, "Italia");
     public static final Restaurant restaurantUkraine = new Restaurant(RESTAURANT1_ID+2, "Ukraine");
-    public static final Restaurant restaurantFrance = new Restaurant(RESTAURANT1_ID+3, "France");
+    public static final Restaurant restaurantFrance = new Restaurant(RESTAURANT_FR_ID, "France");
 
     public static final List<Restaurant> allRestaurants = List.of(restaurantUSA, restaurantItalia, restaurantUkraine, restaurantFrance);
 
