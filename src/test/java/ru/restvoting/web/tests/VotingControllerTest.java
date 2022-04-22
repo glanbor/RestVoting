@@ -56,7 +56,7 @@ class VotingControllerTest extends AbstractControllerTest {
 
     @Test
     void getById() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "by-user-" + USER_ID)
+        perform(MockMvcRequestBuilders.get(REST_URL + "by-user")
                 .param("lunchDate", String.valueOf(LocalDate.now()))
                 .with(userHttpBasic(user)))
                 .andDo(print())
@@ -81,7 +81,7 @@ class VotingControllerTest extends AbstractControllerTest {
 
             ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .with(userHttpBasic(user))
+                    .with(userHttpBasic(user2))
                     .content(JsonUtil.writeValue(newVote)))
                     .andExpect(status().isCreated());
 

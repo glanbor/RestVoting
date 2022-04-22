@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @Getter
 @NoArgsConstructor
-@ToString(callSuper = true, exclude = "restaurant")
+@ToString(callSuper = true)
 public class Dish extends AbstractNamedEntity {
     
     @Column(name = "price", nullable = false)

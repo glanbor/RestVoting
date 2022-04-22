@@ -9,15 +9,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.restvoting.AuthorizedUser;
 import ru.restvoting.model.Menu;
+import ru.restvoting.model.Restaurant;
 import ru.restvoting.model.Vote;
 import ru.restvoting.repository.MenuRepository;
+import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.repository.VoteRepository;
 import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
-import ru.restvoting.util.exception.AlreadyFoundException;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -36,6 +39,7 @@ public class VotingController {
 
     private final VoteRepository voteRepository;
     private final MenuRepository menuRepository;
+    private final RestaurantRepository restaurantRepository;
 
     @GetMapping()
     @Cacheable("todayMenus")
@@ -45,23 +49,25 @@ public class VotingController {
         return menuList;
     }
 
-    @GetMapping("/by-user-{id}")
-    public Vote getById(@PathVariable("id") int userId,
-                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
-        log.info("get vote for user {} for date {}", userId, lunchDate);
-        return voteRepository.getByUserForDate(userId, lunchDate);
+    @GetMapping("/by-user")
+    public Vote getByUser(@AuthenticationPrincipal AuthorizedUser authUser,
+                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
+        log.info("get vote for user {} for date {}", authUser, lunchDate);
+        return voteRepository.getByUserForDate(authUser.getId(), lunchDate);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> createWithLocation(@Valid @RequestBody Vote vote) {
-        log.info("create {}", vote);
+    public ResponseEntity<Vote> createWithLocation(@Valid @RequestBody Vote vote,
+                                                   @AuthenticationPrincipal AuthorizedUser authUser) {
+        log.info("create vote for user {}", authUser);
         checkNew(vote);
         validateVote(vote);
-            Vote created = voteRepository.save(vote);
-            URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path(REST_URL + "/{id}")
-                    .buildAndExpand(created.getId()).toUri();
-            return ResponseEntity.created(uriOfNewResource).body(created);
+
+        Vote created = voteRepository.save(vote);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
 //    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -82,7 +88,8 @@ public class VotingController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Vote vote, @PathVariable int id) {
+    public void update(@Valid @RequestBody Vote vote, @PathVariable int id,
+                       @AuthenticationPrincipal AuthorizedUser authUser) {
         log.info("update vote {} with id={}", vote, id);
         ValidationUtil.assureIdConsistent(vote, id);
         ValidationUtil.validateVote(vote);

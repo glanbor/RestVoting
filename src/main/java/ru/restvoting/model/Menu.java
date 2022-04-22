@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor()
-@ToString(callSuper = true, exclude = {"restaurant"})
+@ToString(callSuper = true)
 public class Menu extends AbstractBaseEntity{
 
     @Column(name = "menu_date", nullable = false)

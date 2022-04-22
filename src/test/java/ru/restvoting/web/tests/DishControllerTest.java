@@ -110,6 +110,7 @@ public class DishControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(newDish)))
+                .andDo(print())
                 .andExpect(status().isCreated());
         Dish created = DISH_MATCHER.readFromJson(action);
         int newId = created.id();
