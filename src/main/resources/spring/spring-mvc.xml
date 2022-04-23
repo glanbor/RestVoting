@@ -43,12 +43,18 @@
 
     <context:component-scan base-package="ru.restvoting.**.web"/>
 
+    <!--  Swagger2  https://medium.com/@andreymamontov/swagger-2-configuration-with-spring-xml-3cd643a12425 -->
+    <bean class="springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration"/>
+    <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/" />
+
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
           p:cacheSeconds="5"
           p:defaultEncoding="UTF-8">
         <property name="basenames" value="file:///#{systemEnvironment[RESTVOTING_ROOT]}/config/messages/app"/>
         <property name="fallbackToSystemLocale" value="false"/>
     </bean>
+
+
 
     <!--    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean" >-->
     <!--        <property name="registerDefaultFormatters" value="false" />-->
