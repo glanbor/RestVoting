@@ -83,8 +83,8 @@ class VotingControllerTest extends AbstractControllerTest {
             ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .with(userHttpBasic(user2))
-                    .content(JsonUtil.writeValue(newVote)))
+                    .with(userHttpBasic(user2)))
+                    .andDo(print())
                     .andExpect(status().isCreated());
 
             Vote created = VOTE_MATCHER.readFromJson(action);
@@ -97,7 +97,6 @@ class VotingControllerTest extends AbstractControllerTest {
 
     @Test
     void createInvalidTime() throws Exception {
-        Vote invalid = VoteTestData.getNew();
         try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
             dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
                     .thenReturn(ValidationUtil.VOTING_DEADLINE.plus(1, ChronoUnit.HOURS));
@@ -105,8 +104,8 @@ class VotingControllerTest extends AbstractControllerTest {
             perform(MockMvcRequestBuilders.post(REST_URL)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
-                    .with(userHttpBasic(user))
-                    .content(JsonUtil.writeValue(invalid)))
+                    .with(userHttpBasic(user)))
+                    .andDo(print())
                     .andExpect(status().isUnprocessableEntity())
                     .andExpect(errorType(VALIDATION_ERROR));
         }
@@ -115,16 +114,13 @@ class VotingControllerTest extends AbstractControllerTest {
     @Test
     @Transactional(propagation = Propagation.NEVER)
     void createDuplicate() throws Exception {
-        Vote duplicate = VoteTestData.getNew();
-        duplicate.setUserId(100000);
         try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
             dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
                     .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
             perform(MockMvcRequestBuilders.post(REST_URL)
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .with(userHttpBasic(user))
-                    .content(JsonUtil.writeValue(duplicate)))
+                    .with(userHttpBasic(user)))
                     .andDo(print())
                     .andExpect(status().isUnprocessableEntity())
                     .andExpect(errorType(VALIDATION_ERROR));

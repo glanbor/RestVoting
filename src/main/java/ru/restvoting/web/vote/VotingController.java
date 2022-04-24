@@ -57,35 +57,18 @@ public class VotingController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> createWithLocation(@Valid @RequestBody Vote vote,
-                                                   @RequestParam int restaurantId,
+    public ResponseEntity<Vote> createWithLocation(@RequestParam int restaurantId,
                                                    @AuthenticationPrincipal AuthorizedUser authUser) {
-        log.info("create vote for user {}", authUser);
-        checkNew(vote);
-        validateVote(vote);
-        vote.setRestaurant(restaurantRepository.getById(restaurantId));
-        Vote created = voteRepository.save(vote);
+        int userId = authUser.getId();
+        log.info("create vote for userId {}", userId);
+        Vote newVote = new Vote(null, LocalDate.now(), userId, restaurantRepository.getById(restaurantId));
+        validateVote(newVote);
+        Vote created = voteRepository.save(newVote);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
-
-//    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<Vote> createWithLocation(@Valid @RequestBody Vote vote) {
-//        log.info("create {}", vote);
-//        checkNew(vote);
-//        validateVote(vote);
-//        if (voteRepository.getAllByUser(vote.getUserId(), LocalDate.now(), LocalDate.now()).size() == 0) {
-//            Vote created = voteRepository.save(vote);
-//            URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                    .path(REST_URL + "/{id}")
-//                    .buildAndExpand(created.getId()).toUri();
-//            return ResponseEntity.created(uriOfNewResource).body(created);
-//        } else {
-//            throw new AlreadyFoundException("The vote fot User with id " + vote.getUserId() + " already exists");
-//        }
-//    }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)

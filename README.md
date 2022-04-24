@@ -24,4 +24,4 @@ Build a voting system for deciding where to have lunch.
 Maven, Spring Boot, Spring MVC, Spring Security, Spring DataJPA, REST(Jackson), Swagger/OpenAPI, HSQLDB, Lombok, JUnit 5
 _____
 
-[REST API documentation](http://localhost:8080/swagger-ui.html) by Swagger
+[REST API documentation](http://localhost:8080/rest/swagger-ui.html) by Swagger
