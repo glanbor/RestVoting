@@ -16,7 +16,6 @@ import ru.restvoting.web.data.DishTestData;
 import ru.restvoting.web.dish.DishController;
 import ru.restvoting.web.json.JsonUtil;
 
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

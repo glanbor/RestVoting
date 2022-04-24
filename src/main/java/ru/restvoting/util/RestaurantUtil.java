@@ -12,9 +12,6 @@ import java.util.stream.Collectors;
 
 public class RestaurantUtil {
 
-    private RestaurantUtil() {
-    }
-
     public static List<RestaurantTo> getTos(Collection<Restaurant> restaurants, List<Vote> votes) {
         return restaurants.stream()
                 .map(res -> createTo(res, votes.stream().

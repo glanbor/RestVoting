@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.AuthorizedUser;
 import ru.restvoting.model.Menu;
-import ru.restvoting.model.Restaurant;
 import ru.restvoting.model.Vote;
 import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.repository.VoteRepository;
+import ru.restvoting.to.VoteTo;
 import ru.restvoting.util.DateTimeUtil;
-import ru.restvoting.util.ValidationUtil;
+import ru.restvoting.util.VoteUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -50,10 +50,11 @@ public class VotingController {
     }
 
     @GetMapping("/by-user")
-    public Vote getByUser(@AuthenticationPrincipal AuthorizedUser authUser,
+    public VoteTo getByUser(@AuthenticationPrincipal AuthorizedUser authUser,
                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
         log.info("get vote for user {} for date {}", authUser, lunchDate);
-        return voteRepository.getByUserForDate(authUser.getId(), lunchDate);
+        Vote byUserForDate = voteRepository.getByUserForDate(authUser.getId(), lunchDate);
+        return VoteUtil.createTo(byUserForDate);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -76,17 +77,17 @@ public class VotingController {
                        @RequestParam int restaurantId,
                        @AuthenticationPrincipal AuthorizedUser authUser) {
         log.info("update vote {} with id={}", vote, id);
-        ValidationUtil.assureIdConsistent(vote, id);
-        ValidationUtil.validateVote(vote);
+        assureIdConsistent(vote, id);
+        validateVote(vote);
         vote.setRestaurant(restaurantRepository.getById(restaurantId));
         voteRepository.save(vote);
     }
 
     @GetMapping("/by-date")
-    public List<Vote> getAllByDate(
+    public List<VoteTo> getAllByDate(
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
         log.info("get all votes for date {}", lunchDate);
-        return voteRepository.getAll(DateTimeUtil.setStartDate(lunchDate), DateTimeUtil.setEndDate(lunchDate));
+        return VoteUtil.getTos(voteRepository.getAll(DateTimeUtil.setStartDate(lunchDate), DateTimeUtil.setEndDate(lunchDate)));
     }
 }
 

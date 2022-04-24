@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.restvoting.repository.VoteRepository;
+import ru.restvoting.util.VoteUtil;
 import ru.restvoting.util.exception.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.vote.VoteController;
@@ -32,9 +33,10 @@ class VoteControllerTest extends AbstractControllerTest {
                 .param("endDate", "")
                 .param("userId", "")
                 .with(userHttpBasic(admin)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_MATCHER.contentJson(allVotes));
+                .andExpect(VOTE_TO_MATCHER.contentJson(allVoteTos));
     }
 
     @Test
@@ -44,7 +46,7 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_MATCHER.contentJson(vote1));
+                .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.createTo(vote1)));
     }
 
     @Test

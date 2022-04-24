@@ -1,6 +1,8 @@
 package ru.restvoting.web.data;
 
 import ru.restvoting.model.Vote;
+import ru.restvoting.to.VoteTo;
+import ru.restvoting.util.VoteUtil;
 import ru.restvoting.web.MatcherFactory;
 
 import java.time.LocalDate;
@@ -13,6 +15,9 @@ public class VoteTestData {
     public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "restaurant");
 
+    public static final MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class, "");
+
     public static final int VOTE1_ID = START_SEQ + 34;
     public static final int TODAY_VOTE1_ID = VOTE1_ID + 2;
     public static final int NOT_FOUND = 10;
@@ -24,7 +29,9 @@ public class VoteTestData {
 
     public static final List<Vote> allVotes = List.of(adminVote, vote3, vote2, vote1);
 
-    public static final List<Vote> allTodayVotes = List.of(adminVote, vote3);
+    public static final List<VoteTo> allVoteTos = VoteUtil.getTos(List.of(adminVote, vote3, vote2, vote1));
+
+    public static final List<VoteTo> allTodayVoteTos = VoteUtil.getTos(List.of(adminVote, vote3));
 
     public static Vote getNew() {
         return new Vote(null, LocalDate.now(), 100001, restaurantFrance);
