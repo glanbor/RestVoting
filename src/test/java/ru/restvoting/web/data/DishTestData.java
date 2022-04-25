@@ -5,7 +5,6 @@ import ru.restvoting.web.MatcherFactory;
 
 import java.util.List;
 
-import static java.time.LocalDateTime.of;
 import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
 import static ru.restvoting.web.data.RestaurantTestData.*;
 
