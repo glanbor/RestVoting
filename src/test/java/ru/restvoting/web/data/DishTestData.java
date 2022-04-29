@@ -5,15 +5,14 @@ import ru.restvoting.web.MatcherFactory;
 
 import java.util.List;
 
-import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
 import static ru.restvoting.web.data.RestaurantTestData.*;
 
 public class DishTestData {
     public static final MatcherFactory.Matcher<Dish> DISH_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Dish.class, "restaurant");
 
-    public static final int NOT_FOUND = 10;
-    public static final int DISH1_ID = START_SEQ + 20;
+    public static final int NOT_FOUND = 100;
+    public static final int DISH1_ID = 1;
     public static final int FR_DISH1_ID = DISH1_ID + 9;
 
     public static final Dish amDish1 = new Dish(DISH1_ID, "AmFood1", 10.99, restaurantUSA);

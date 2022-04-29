@@ -53,14 +53,14 @@ public class VotingController {
     public VoteTo getByUser(@AuthenticationPrincipal AuthUser authUser,
                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
         log.info("get vote for user {} for date {}", authUser, lunchDate);
-        Vote byUserForDate = voteRepository.getByUserForDate(authUser.getId(), lunchDate);
+        Vote byUserForDate = voteRepository.getByUserForDate(authUser.id(), lunchDate);
         return VoteUtil.createTo(byUserForDate);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Vote> createWithLocation(@RequestParam int restaurantId,
                                                    @AuthenticationPrincipal AuthUser authUser) {
-        int userId = authUser.getId();
+        int userId = authUser.id();
         log.info("create vote for userId {}", userId);
         Vote newVote = new Vote(null, LocalDate.now(), userId, restaurantRepository.getById(restaurantId));
         validateVote(newVote);

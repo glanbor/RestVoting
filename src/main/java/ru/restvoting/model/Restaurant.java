@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "restaurant", uniqueConstraints =
         {@UniqueConstraint(columnNames = "name", name = "unique_name_for_restaurant_idx")})
-public class Restaurant extends AbstractNamedEntity {
+public class Restaurant extends NamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @JsonManagedReference

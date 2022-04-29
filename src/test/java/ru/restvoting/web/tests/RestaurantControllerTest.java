@@ -24,7 +24,7 @@ import static ru.restvoting.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_RESTAUR
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.*;
 import static ru.restvoting.web.data.RestaurantTestData.*;
-import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
+import static ru.restvoting.web.data.RestaurantTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.admin;
 import static ru.restvoting.web.data.UserTestData.user;
 import static ru.restvoting.web.data.VoteTestData.allVotes;
@@ -36,7 +36,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Autowired
     private RestaurantRepository restaurantRepository;
-
 
     @Test
     void getAll() throws Exception {

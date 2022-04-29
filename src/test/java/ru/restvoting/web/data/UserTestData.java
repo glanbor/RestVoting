@@ -8,15 +8,13 @@ import ru.restvoting.web.json.JsonUtil;
 import java.util.Collections;
 import java.util.Date;
 
-import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
-
 public class UserTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered", "password");
 
-    public static final int USER_ID = START_SEQ;
-    public static final int ADMIN_ID = START_SEQ + 2;
-    public static final int NOT_FOUND = 10;
+    public static final int USER_ID = 1;
+    public static final int ADMIN_ID = 3;
+    public static final int NOT_FOUND = 100;
 
     public static final User user = new User(USER_ID, "User", "user@gmail.com", "user", Role.USER);
     public static final User user2 = new User(USER_ID+1, "User2", "user2@gmail.com", "user2", Role.USER);

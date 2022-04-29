@@ -6,7 +6,6 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor()
 @ToString(callSuper = true)
-public class Menu extends AbstractBaseEntity{
+public class Menu extends BaseEntity {
 
     @Column(name = "menu_date", nullable = false)
     @NotNull

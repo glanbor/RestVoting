@@ -8,12 +8,14 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
+import ru.restvoting.HasIdAndEmail;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.*;
 
 @Setter
@@ -23,7 +25,7 @@ import java.util.*;
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(
         columnNames = "email", name = "unique_email_for_user_idx")})
-public class User extends AbstractNamedEntity {
+public class User extends NamedEntity implements HasIdAndEmail, Serializable {
 
     @Column(name = "email", nullable = false, unique = true)
     @Email

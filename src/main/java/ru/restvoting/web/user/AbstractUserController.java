@@ -1,5 +1,6 @@
 package ru.restvoting.web.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import ru.restvoting.model.User;
 import ru.restvoting.repository.UserRepository;
 import ru.restvoting.to.UserTo;
@@ -17,13 +20,20 @@ import java.util.List;
 import static ru.restvoting.util.UserUtil.prepareToSave;
 import static ru.restvoting.util.ValidationUtil.*;
 
+@Slf4j
 public abstract class AbstractUserController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     protected UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();;
+    @Autowired
+    private UniqueMailValidator emailValidator;
+
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(emailValidator);
+    }
+
 
     public List<User> getAll() {
         log.info("getAll");
@@ -69,6 +79,6 @@ public abstract class AbstractUserController {
     }
 
     private User prepareAndSave(User user) {
-        return userRepository.save(prepareToSave(user, passwordEncoder));
+        return userRepository.save(prepareToSave(user));
     }
 }

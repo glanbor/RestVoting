@@ -1,5 +1,6 @@
 package ru.restvoting.web.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Slf4j
 public class AdminUserController extends AbstractUserController {
     public static final String REST_URL = "/rest/admin/users";
 

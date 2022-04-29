@@ -25,7 +25,6 @@ import static ru.restvoting.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_MENU;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.*;
 import static ru.restvoting.web.data.RestaurantTestData.restaurantUSA;
-import static ru.restvoting.web.data.UserTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.admin;
 import static ru.restvoting.web.data.UserTestData.user;
 

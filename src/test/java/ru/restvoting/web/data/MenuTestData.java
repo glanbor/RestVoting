@@ -6,9 +6,6 @@ import ru.restvoting.web.MatcherFactory;
 import java.time.LocalDate;
 import java.util.List;
 
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static ru.restvoting.model.AbstractBaseEntity.START_SEQ;
 import static ru.restvoting.web.data.DishTestData.*;
 import static ru.restvoting.web.data.RestaurantTestData.*;
 
@@ -26,8 +23,8 @@ public class MenuTestData {
 //                        throw new UnsupportedOperationException();
 //                    });
 
-    public static final int NOT_FOUND = 10;
-    public static final int MENU1_ID = START_SEQ + 8;
+    public static final int NOT_FOUND = 100;
+    public static final int MENU1_ID = 1;
 
     public static final Menu menuUSA1 =
             new Menu(MENU1_ID, LocalDate.of(2022, 03, 01), restaurantUSA, dishesForUSAMenu1);

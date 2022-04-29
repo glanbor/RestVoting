@@ -1,7 +1,6 @@
 package ru.restvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,13 +19,13 @@ import java.time.LocalDate;
 @Entity
 @Table(name="vote", uniqueConstraints = {@UniqueConstraint(
         columnNames = {"vote_date", "user_id"}, name = "unique_vote_date_for_user_idx")})
-public class Vote extends AbstractBaseEntity {
+public class Vote extends BaseEntity {
 
     @Column(name = "vote_date", nullable = false)
     @NotNull
     private LocalDate voteDate;
 
-    @Column(name = "user_id", nullable = false, unique = true)
+    @Column(name = "user_id", nullable = false)
     private int userId;
 
     @ManyToOne(fetch = FetchType.LAZY)

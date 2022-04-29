@@ -1,7 +1,9 @@
 package ru.restvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.springframework.data.domain.Persistable;
 import org.springframework.util.Assert;
 import ru.restvoting.HasId;
 
@@ -13,12 +15,11 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractBaseEntity implements HasId {
-    public static final int START_SEQ = 100000;
+public abstract class BaseEntity implements Persistable<Integer>, HasId {
 
     @Id
-    @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY) // https://stackoverflow.com/a/28025008/548473
     protected Integer id;
 
     public int id() {
@@ -44,7 +45,7 @@ public abstract class AbstractBaseEntity implements HasId {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AbstractBaseEntity that = (AbstractBaseEntity) o;
+        BaseEntity that = (BaseEntity) o;
         return id != null && id.equals(that.id);
     }
 
