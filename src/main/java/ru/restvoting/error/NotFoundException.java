@@ -1,4 +1,4 @@
-package ru.restvoting.util.exception;
+package ru.restvoting.error;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

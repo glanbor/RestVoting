@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.restvoting.util.exception.ErrorType.VALIDATION_ERROR;
+import static ru.restvoting.error.ErrorType.VALIDATION_ERROR;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.MENU_WITH_DISHES_MATCHER;
 import static ru.restvoting.web.data.MenuTestData.allTodayMenu;

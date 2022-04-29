@@ -1,6 +1,5 @@
 package ru.restvoting.web;
 
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -14,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import ru.restvoting.error.*;
 import ru.restvoting.util.ValidationUtil;
-import ru.restvoting.util.exception.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
-import static ru.restvoting.util.exception.ErrorType.*;
+import static ru.restvoting.error.ErrorType.*;
 
 @RestControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)

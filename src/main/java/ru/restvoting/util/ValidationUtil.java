@@ -4,17 +4,14 @@ import org.slf4j.Logger;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
 import ru.restvoting.HasId;
-import ru.restvoting.model.AbstractBaseEntity;
 import ru.restvoting.model.Vote;
-import ru.restvoting.util.exception.ErrorType;
-import ru.restvoting.util.exception.IllegalDateTimeException;
-import ru.restvoting.util.exception.NotFoundException;
+import ru.restvoting.error.ErrorType;
+import ru.restvoting.error.IllegalDateTimeException;
+import ru.restvoting.error.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import static ru.restvoting.util.DateTimeUtil.getLocalTime;
 
 public class ValidationUtil {
 

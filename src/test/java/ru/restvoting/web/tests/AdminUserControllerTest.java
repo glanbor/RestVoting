@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.restvoting.model.Role;
 import ru.restvoting.model.User;
 import ru.restvoting.repository.UserRepository;
-import ru.restvoting.util.exception.NotFoundException;
+import ru.restvoting.error.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.UserTestData;
 import ru.restvoting.web.user.AdminUserController;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
-import static ru.restvoting.util.exception.ErrorType.VALIDATION_ERROR;
+import static ru.restvoting.error.ErrorType.VALIDATION_ERROR;
 import static ru.restvoting.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_EMAIL;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.UserTestData.*;

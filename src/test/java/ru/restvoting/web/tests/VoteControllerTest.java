@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.restvoting.repository.VoteRepository;
 import ru.restvoting.util.VoteUtil;
-import ru.restvoting.util.exception.NotFoundException;
+import ru.restvoting.error.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.vote.VoteController;
 

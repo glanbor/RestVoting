@@ -1,4 +1,4 @@
-package ru.restvoting.util.exception;
+package ru.restvoting.error;
 
 import org.springframework.http.HttpStatus;
 

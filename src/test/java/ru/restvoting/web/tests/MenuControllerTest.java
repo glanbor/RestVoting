@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.restvoting.model.Menu;
 import ru.restvoting.repository.MenuRepository;
-import ru.restvoting.util.exception.NotFoundException;
+import ru.restvoting.error.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.MenuTestData;
 import ru.restvoting.web.json.JsonUtil;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
-import static ru.restvoting.util.exception.ErrorType.VALIDATION_ERROR;
+import static ru.restvoting.error.ErrorType.VALIDATION_ERROR;
 import static ru.restvoting.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_MENU;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.*;
