@@ -68,11 +68,6 @@ public abstract class AbstractUserController {
         checkNotFoundWithId(userRepository.save(user), user.id());
     }
 
-    public User getByMail(String email) {
-        log.info("getByEmail {}", email);
-        return userRepository.getByEmail(email);
-    }
-
     private User prepareAndSave(User user) {
         return userRepository.save(prepareToSave(user, passwordEncoder));
     }

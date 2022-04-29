@@ -55,10 +55,10 @@ public class AdminUserController extends AbstractUserController {
         super.update(user, id);
     }
 
-    @Override
     @GetMapping("/by-email")
-    public User getByMail(@RequestParam String email) {
-        return super.getByMail(email);
+    public ResponseEntity<User> getByEmail(@RequestParam String email) {
+        log.info("getByEmail {}", email);
+        return ResponseEntity.of(userRepository.findByEmailIgnoreCase(email));
     }
 
     @PostMapping("/{id}")

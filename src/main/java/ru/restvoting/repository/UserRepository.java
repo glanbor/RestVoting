@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.restvoting.model.User;
 
 import javax.persistence.QueryHint;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Repository
@@ -17,11 +18,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("DELETE FROM User u WHERE u.id=:id")
     int delete(@Param("id") int id);
 
-    //  https://docs.jboss.org/hibernate/orm/5.2/userguide/html_single/Hibernate_User_Guide.html#hql-distinct
-    @QueryHints({
-            @QueryHint(name = org.hibernate.jpa.QueryHints.HINT_PASS_DISTINCT_THROUGH, value = "false")
-    })
-    User getByEmail(String email);
+    @Query("SELECT u FROM User u WHERE u.email = LOWER(:email)")
+    Optional<User> findByEmailIgnoreCase(String email);
 
     @EntityGraph(attributePaths = {"votes"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT u FROM User u WHERE u.id=?1")

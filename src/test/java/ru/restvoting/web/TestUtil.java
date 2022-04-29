@@ -5,14 +5,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import ru.restvoting.AuthorizedUser;
+import ru.restvoting.AuthUser;
 import ru.restvoting.model.User;
 
 public class TestUtil {
 
     public static void mockAuthorize(User user) {
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(new AuthorizedUser(user), null, user.getRoles()));
+                new UsernamePasswordAuthenticationToken(new AuthUser(user), null, user.getRoles()));
     }
 
     public static RequestPostProcessor userHttpBasic(User user) {

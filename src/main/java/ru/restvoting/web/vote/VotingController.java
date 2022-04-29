@@ -12,7 +12,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.restvoting.AuthorizedUser;
+import ru.restvoting.AuthUser;
 import ru.restvoting.model.Menu;
 import ru.restvoting.model.Vote;
 import ru.restvoting.repository.MenuRepository;
@@ -50,7 +50,7 @@ public class VotingController {
     }
 
     @GetMapping("/by-user")
-    public VoteTo getByUser(@AuthenticationPrincipal AuthorizedUser authUser,
+    public VoteTo getByUser(@AuthenticationPrincipal AuthUser authUser,
                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
         log.info("get vote for user {} for date {}", authUser, lunchDate);
         Vote byUserForDate = voteRepository.getByUserForDate(authUser.getId(), lunchDate);
@@ -59,7 +59,7 @@ public class VotingController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Vote> createWithLocation(@RequestParam int restaurantId,
-                                                   @AuthenticationPrincipal AuthorizedUser authUser) {
+                                                   @AuthenticationPrincipal AuthUser authUser) {
         int userId = authUser.getId();
         log.info("create vote for userId {}", userId);
         Vote newVote = new Vote(null, LocalDate.now(), userId, restaurantRepository.getById(restaurantId));
@@ -75,7 +75,7 @@ public class VotingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Vote vote, @PathVariable int id,
                        @RequestParam int restaurantId,
-                       @AuthenticationPrincipal AuthorizedUser authUser) {
+                       @AuthenticationPrincipal AuthUser authUser) {
         log.info("update vote {} with id={}", vote, id);
         assureIdConsistent(vote, id);
         validateVote(vote);

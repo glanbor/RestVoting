@@ -2,7 +2,9 @@ package ru.restvoting.web.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,7 +12,13 @@ import java.util.Map;
 
 import static ru.restvoting.web.json.JacksonObjectMapper.getMapper;
 
+@UtilityClass
 public class JsonUtil {
+    private static ObjectMapper mapper;
+
+    public static void setMapper(ObjectMapper mapper) {
+        JsonUtil.mapper = mapper;
+    }
 
     public static <T> List<T> readValues(String json, Class<T> clazz) {
         ObjectReader reader = getMapper().readerFor(clazz);
