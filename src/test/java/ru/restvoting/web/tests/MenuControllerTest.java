@@ -31,7 +31,7 @@ import static ru.restvoting.web.data.UserTestData.*;
 
 class MenuControllerTest extends AbstractControllerTest {
     private static final String REST_URL =
-            MenuController.REST_URL.replace("{restaurantId}", "100004") + '/';
+            MenuController.REST_URL.replace("{restaurantId}", "1") + '/';
 
     @Autowired
     private MenuRepository menuRepository;

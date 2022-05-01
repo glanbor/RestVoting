@@ -14,11 +14,7 @@ import java.util.List;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class RestaurantTo extends BaseTo {
-
-    @NotBlank
-    @Size(min = 2, max = 50)
-    String name;
+public class RestaurantTo extends NamedTo implements HasId {
 
     List<Vote> voteList;
 
@@ -28,8 +24,7 @@ public class RestaurantTo extends BaseTo {
 
     @ConstructorProperties({"id", "name", "voteList", "votesAmount"})
     public RestaurantTo(Integer id, String name, List<Vote> voteList, int votesAmount) {
-        super(id);
-        this.name = name;
+        super(id, name);
         this.voteList = voteList;
         this.votesAmount = votesAmount;
     }

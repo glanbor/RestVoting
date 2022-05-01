@@ -3,8 +3,8 @@ package ru.restvoting.to;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import ru.restvoting.HasId;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class VoteTo extends BaseTo {
+public class VoteTo extends BaseTo implements HasId {
 
     @NotNull
     LocalDate voteDate;

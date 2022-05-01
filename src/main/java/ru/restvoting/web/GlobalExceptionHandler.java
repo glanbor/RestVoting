@@ -23,8 +23,6 @@ import ru.restvoting.error.*;
 import ru.restvoting.util.ValidationUtil;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -87,6 +85,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> persistException(WebRequest request, NotFoundException ex) {
         log.error("NotFoundException: {}", ex.getMessage());
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> conflict(WebRequest request, DataIntegrityViolationException ex) {
+        log.error("DataIntegrityViolationException: {}", ex.getMessage());
+        String rootMsg = ValidationUtil.getRootCause(ex).getMessage();
+        if (rootMsg != null) {
+            String lowerCaseMsg = rootMsg.toLowerCase();
+            for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
+                if (lowerCaseMsg.contains(entry.getKey())) {
+                    return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), entry.getValue()), HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+            }
+        }
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 

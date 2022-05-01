@@ -34,7 +34,7 @@ import static ru.restvoting.web.data.UserTestData.*;
 public class DishControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL =
-            DishController.REST_URL.replace("{restaurantId}", "100007") + '/';
+            DishController.REST_URL.replace("{restaurantId}", "4") + '/';
 
     @Autowired
     private DishRepository dishRepository;
@@ -138,7 +138,6 @@ public class DishControllerTest extends AbstractControllerTest {
         duplicate.setName(frDish1.getName());
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(duplicate)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())

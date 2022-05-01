@@ -118,7 +118,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
         Restaurant duplicate = new Restaurant(null, "USA");
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(duplicate)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
@@ -132,7 +131,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
         Restaurant invalid = new Restaurant(null, "");
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
