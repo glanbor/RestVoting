@@ -5,6 +5,7 @@ import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,11 +24,12 @@ import ru.restvoting.web.vote.VotingController;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.mockStatic;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.restvoting.error.ErrorType.VALIDATION_ERROR;
+import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_DUPLICATE_VOTE;
 import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.MENU_WITH_DISHES_MATCHER;
 import static ru.restvoting.web.data.MenuTestData.allTodayMenu;
@@ -42,9 +44,9 @@ class VotingControllerTest extends AbstractControllerTest {
     private VoteRepository voteRepository;
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void getAllMenusForToday() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL)
-                .with(userHttpBasic(user)))
+        perform(MockMvcRequestBuilders.get(REST_URL))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -52,10 +54,10 @@ class VotingControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void getById() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "by-user")
-                .param("lunchDate", String.valueOf(LocalDate.now()))
-                .with(userHttpBasic(user)))
+                .param("lunchDate", String.valueOf(LocalDate.now())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -92,6 +94,7 @@ class VotingControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void createInvalidTime() throws Exception {
         try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
             dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
@@ -99,15 +102,14 @@ class VotingControllerTest extends AbstractControllerTest {
 
             perform(MockMvcRequestBuilders.post(REST_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
-                    .with(userHttpBasic(user)))
+                    .param("restaurantId", String.valueOf(RESTAURANT_FR_ID)))
                     .andDo(print())
-                    .andExpect(status().isUnprocessableEntity())
-                    .andExpect(errorType(VALIDATION_ERROR));
+                    .andExpect(status().isUnprocessableEntity());
         }
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     @Transactional(propagation = Propagation.NEVER)
     void createDuplicate() throws Exception {
         try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
@@ -115,15 +117,15 @@ class VotingControllerTest extends AbstractControllerTest {
                     .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
             perform(MockMvcRequestBuilders.post(REST_URL)
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .with(userHttpBasic(user)))
+                    .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isUnprocessableEntity())
-                    .andExpect(errorType(VALIDATION_ERROR));
+                    .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_VOTE)));
         }
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void update() throws Exception {
         Vote updated = VoteTestData.getUpdated();
         try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
@@ -133,7 +135,6 @@ class VotingControllerTest extends AbstractControllerTest {
             perform(MockMvcRequestBuilders.put(REST_URL + TODAY_VOTE1_ID)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
-                    .with(userHttpBasic(user))
                     .content(JsonUtil.writeValue(updated)))
                     .andDo(print())
                     .andExpect(status().isNoContent());
@@ -143,6 +144,7 @@ class VotingControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void updateInvalid() throws Exception {
         Vote updated = VoteTestData.getUpdated();
         try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
@@ -152,19 +154,17 @@ class VotingControllerTest extends AbstractControllerTest {
             perform(MockMvcRequestBuilders.put(REST_URL + TODAY_VOTE1_ID)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
-                    .with(userHttpBasic(user))
                     .content(JsonUtil.writeValue(updated)))
                     .andDo(print())
-                    .andExpect(status().isUnprocessableEntity())
-                    .andExpect(errorType(VALIDATION_ERROR));
+                    .andExpect(status().isUnprocessableEntity());
         }
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void getAllByDate() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "by-date")
-                .param("lunchDate", String.valueOf(LocalDate.now()))
-                .with(userHttpBasic(user)))
+                .param("lunchDate", String.valueOf(LocalDate.now())))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

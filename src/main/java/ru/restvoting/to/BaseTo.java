@@ -12,4 +12,9 @@ import ru.restvoting.HasId;
 public abstract class BaseTo implements HasId {
     protected Integer id;
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ":" + id;
+    }
+
 }

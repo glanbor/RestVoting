@@ -3,6 +3,7 @@ package ru.restvoting.web.tests;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,12 +15,11 @@ import ru.restvoting.util.UserUtil;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.json.JsonUtil;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.restvoting.error.ErrorType.VALIDATION_ERROR;
-import static ru.restvoting.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_EMAIL;
-import static ru.restvoting.web.TestUtil.userHttpBasic;
+import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_DUPLICATE_EMAIL;
 import static ru.restvoting.web.data.UserTestData.*;
 import static ru.restvoting.web.user.ProfileUserController.REST_URL;
 
@@ -29,9 +29,9 @@ class ProfileUserControllerTest extends AbstractControllerTest {
     private UserRepository userRepository;
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL)
-                .with(userHttpBasic(user)))
+        perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_MATCHER.contentJson(user));
@@ -44,9 +44,9 @@ class ProfileUserControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL)
-                .with(userHttpBasic(user)))
+        perform(MockMvcRequestBuilders.delete(REST_URL))
                 .andExpect(status().isNoContent());
         USER_MATCHER.assertMatch(userRepository.findAll(), user2, admin, guest);
     }
@@ -75,15 +75,15 @@ class ProfileUserControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(invalidNewTo)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
+
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void update() throws Exception {
         UserTo updatedTo = new UserTo(null, "newName", "user@yandex.ru", "newPassword");
         perform(MockMvcRequestBuilders.put(REST_URL).contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -92,28 +92,26 @@ class ProfileUserControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     void updateInvalid() throws Exception {
         UserTo invalidUpdatedTo = new UserTo(null, "invalid", null, "newPassword");
         perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(invalidUpdatedTo)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR));
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
     @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         UserTo duplicate = new UserTo(null, "Duplicate", "admin@gmail.com", "newPassword");
         perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(duplicate)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(errorType(VALIDATION_ERROR))
-                .andExpect(detailMessage(EXCEPTION_DUPLICATE_EMAIL));
+                .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_EMAIL)));
     }
 }

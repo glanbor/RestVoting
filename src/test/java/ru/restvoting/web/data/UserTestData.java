@@ -15,10 +15,13 @@ public class UserTestData {
     public static final int USER_ID = 1;
     public static final int ADMIN_ID = 3;
     public static final int NOT_FOUND = 100;
+    public static final String USER_MAIL = "user@gmail.com";
+    public static final String USER2_MAIL = "user2@gmail.com";
+    public static final String ADMIN_MAIL = "admin@gmail.com";
 
-    public static final User user = new User(USER_ID, "User", "user@gmail.com", "user", Role.USER);
-    public static final User user2 = new User(USER_ID+1, "User2", "user2@gmail.com", "user2", Role.USER);
-    public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN, Role.USER);
+    public static final User user = new User(USER_ID, "User", USER_MAIL, "user", Role.USER);
+    public static final User user2 = new User(USER_ID+1, "User2", USER2_MAIL, "user2", Role.USER);
+    public static final User admin = new User(ADMIN_ID, "Admin", ADMIN_MAIL, "admin", Role.ADMIN, Role.USER);
     public static final User guest = new User(ADMIN_ID+1, "Guest", "guest@gmail.com", "guest");
 
     public static User getNew() {

@@ -5,10 +5,10 @@ import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
 import ru.restvoting.HasId;
 import ru.restvoting.model.Vote;
-import ru.restvoting.error.ErrorType;
 import ru.restvoting.error.IllegalDateTimeException;
 import ru.restvoting.error.NotFoundException;
 
+import javax.lang.model.type.ErrorType;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalTime;

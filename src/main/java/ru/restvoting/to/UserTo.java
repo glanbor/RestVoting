@@ -1,6 +1,7 @@
 package ru.restvoting.to;
 
 import lombok.*;
+import ru.restvoting.HasIdAndEmail;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -9,12 +10,9 @@ import java.beans.ConstructorProperties;
 import java.io.Serial;
 import java.io.Serializable;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Value
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class UserTo extends BaseTo implements Serializable {
+public class UserTo extends BaseTo implements HasIdAndEmail, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
