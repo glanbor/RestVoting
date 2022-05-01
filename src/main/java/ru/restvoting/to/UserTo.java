@@ -12,17 +12,13 @@ import java.io.Serializable;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class UserTo extends BaseTo implements HasIdAndEmail, Serializable {
+public class UserTo extends NamedTo implements HasIdAndEmail, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @NotBlank
-    @Size(min = 2, max = 100)
-    String name;
-
     @Email
     @NotBlank
-    @Size(max = 100)
+    @Size(max = 128)
     String email;
 
     @NotBlank
@@ -31,8 +27,7 @@ public class UserTo extends BaseTo implements HasIdAndEmail, Serializable {
 
     @ConstructorProperties({"id", "name", "email", "password"})
     public UserTo(Integer id, String name, String email, String password) {
-        super(id);
-        this.name = name;
+        super(id, name);
         this.email = email;
         this.password = password;
     }
