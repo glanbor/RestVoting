@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
 import ru.restvoting.HasId;
+import ru.restvoting.error.IllegalRequestDataException;
 import ru.restvoting.model.Vote;
 import ru.restvoting.error.IllegalDateTimeException;
 import ru.restvoting.error.NotFoundException;
@@ -70,6 +71,12 @@ public class ValidationUtil {
     public static Throwable getRootCause(@NonNull Throwable t) {
         Throwable rootCause = NestedExceptionUtils.getRootCause(t);
         return rootCause != null ? rootCause : t;
+    }
+
+    public static void checkModification(int count, int id) {
+        if (count == 0) {
+            throw new IllegalRequestDataException("Entity with id=" + id + " not found");
+        }
     }
 
     public static String getMessage(Throwable e) {
