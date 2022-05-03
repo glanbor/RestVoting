@@ -13,7 +13,7 @@ import ru.restvoting.repository.UserRepository;
 import ru.restvoting.to.UserTo;
 import ru.restvoting.util.UserUtil;
 import ru.restvoting.web.AbstractControllerTest;
-import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.util.JsonUtil;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

@@ -14,8 +14,8 @@ public class RestaurantUtil {
 
     public static List<RestaurantTo> getTos(Collection<Restaurant> restaurants, List<Vote> votes) {
         return restaurants.stream()
-                .map(res -> createTo(res, votes.stream().
-                        filter(v -> v.getRestaurant().getId() == res.getId())
+                .map(res -> createTo(res, votes.stream()
+                        .filter(v -> v.getRestaurant().getId() == res.getId())
                         .collect(Collectors.toList())))
                 .sorted(Comparator.comparingInt(RestaurantTo::getVotesAmount))
                 .toList();

@@ -13,7 +13,7 @@ import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.error.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.MenuTestData;
-import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.util.JsonUtil;
 import ru.restvoting.web.menu.MenuController;
 
 import static org.hamcrest.Matchers.containsString;

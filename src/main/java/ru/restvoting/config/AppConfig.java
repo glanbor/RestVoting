@@ -12,7 +12,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.util.JsonUtil;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @Slf4j
 @EnableCaching
-// TODO: cache only most requested data!
 public class AppConfig {
 
     @Profile("!test")

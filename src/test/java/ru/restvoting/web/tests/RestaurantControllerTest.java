@@ -13,7 +13,7 @@ import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.util.RestaurantUtil;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.RestaurantTestData;
-import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.util.JsonUtil;
 import ru.restvoting.web.restaurant.RestaurantController;
 
 import static org.hamcrest.Matchers.containsString;
@@ -28,7 +28,7 @@ import static ru.restvoting.web.data.RestaurantTestData.*;
 import static ru.restvoting.web.data.RestaurantTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.*;
 import static ru.restvoting.web.data.VoteTestData.allVotes;
-import static ru.restvoting.web.json.JsonUtil.writeValue;
+import static ru.restvoting.util.JsonUtil.writeValue;
 
 class RestaurantControllerTest extends AbstractControllerTest {
 

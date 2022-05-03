@@ -18,7 +18,7 @@ import ru.restvoting.AuthUser;
 import ru.restvoting.model.Role;
 import ru.restvoting.model.User;
 import ru.restvoting.repository.UserRepository;
-import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.util.JsonUtil;
 
 import java.util.Optional;
 

@@ -18,7 +18,7 @@ import ru.restvoting.util.VoteUtil;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.MatcherFactory;
 import ru.restvoting.web.data.VoteTestData;
-import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.util.JsonUtil;
 import ru.restvoting.web.vote.VotingController;
 
 import java.time.LocalDate;

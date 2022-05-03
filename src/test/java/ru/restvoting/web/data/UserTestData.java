@@ -3,7 +3,7 @@ package ru.restvoting.web.data;
 import ru.restvoting.model.Role;
 import ru.restvoting.model.User;
 import ru.restvoting.web.MatcherFactory;
-import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.util.JsonUtil;
 
 import java.util.Collections;
 import java.util.Date;

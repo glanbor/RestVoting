@@ -17,7 +17,7 @@ import ru.restvoting.error.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.DishTestData;
 import ru.restvoting.web.dish.DishController;
-import ru.restvoting.web.json.JsonUtil;
+import ru.restvoting.util.JsonUtil;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertFalse;

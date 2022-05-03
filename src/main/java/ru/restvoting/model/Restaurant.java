@@ -2,12 +2,7 @@ package ru.restvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,6 +10,7 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString(callSuper = true, exclude = {"dishList", "menuList", "voteList"})
 @Entity
 @Table(name = "restaurant", uniqueConstraints =

@@ -1,16 +1,13 @@
 package ru.restvoting.util;
 
-import org.slf4j.Logger;
+
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
 import ru.restvoting.HasId;
-import ru.restvoting.error.IllegalRequestDataException;
 import ru.restvoting.model.Vote;
 import ru.restvoting.error.IllegalDateTimeException;
 import ru.restvoting.error.NotFoundException;
 
-import javax.lang.model.type.ErrorType;
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -77,19 +74,5 @@ public class ValidationUtil {
         if (count == 0) {
             throw new NotFoundException("Entity with id=" + id + " not found");
         }
-    }
-
-    public static String getMessage(Throwable e) {
-        return e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.getClass().getName();
-    }
-
-    public static Throwable logAndGetRootCause(Logger log, HttpServletRequest req, Exception e, boolean logStackTrace, ErrorType errorType) {
-        Throwable rootCause = ValidationUtil.getRootCause(e);
-        if (logStackTrace) {
-            log.error(errorType + " at request " + req.getRequestURL(), rootCause);
-        } else {
-            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
-        }
-        return rootCause;
     }
 }

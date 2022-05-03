@@ -1,4 +1,4 @@
-package ru.restvoting.web.json;
+package ru.restvoting.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

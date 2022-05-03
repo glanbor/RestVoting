@@ -29,5 +29,5 @@ public interface MenuRepository extends BaseRepository<Menu> {
 
     @Modifying
     @Query("DELETE FROM Menu m WHERE m.restaurant.id =:restaurantId")
-    int deleteFromMenuBeforeDeletingTheRestaurant(int restaurantId);
+    void deleteFromMenuBeforeDeletingTheRestaurant(int restaurantId);
 }
