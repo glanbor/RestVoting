@@ -16,20 +16,6 @@ VALUES ('USA'),
        ('Ukraine'),
        ('France');
 
-INSERT INTO menu (menu_date, restaurant_id)
-VALUES ('2022-03-01', 1),
-       ('2022-03-02',1),
-       (CURRENT_DATE, 1),
-       ('2022-03-01', 2),
-       ('2022-03-02', 2),
-       (CURRENT_DATE,2),
-       ('2022-03-01', 3),
-       ('2022-03-02', 3),
-       (CURRENT_DATE, 3),
-       ('2022-03-01', 4),
-       ('2022-03-02',4),
-       (CURRENT_DATE, 4);
-
 INSERT INTO dish (name, price, restaurant_id)
 VALUES ('AmFood1', '10.99', 1),
        ('AmFood2', '20.99', 1),
@@ -45,6 +31,20 @@ VALUES ('AmFood1', '10.99', 1),
        ('FrFood3', '300', 4),
        ('FrFood4', '400', 4),
        ('FrFood5', '500', 4);
+
+INSERT INTO menu (menu_date, restaurant_id)
+VALUES ('2022-03-01', 1),
+       ('2022-03-02',1),
+       (CURRENT_DATE, 1),
+       ('2022-03-01', 2),
+       ('2022-03-02', 2),
+       (CURRENT_DATE,2),
+       ('2022-03-01', 3),
+       ('2022-03-02', 3),
+       (CURRENT_DATE, 3),
+       ('2022-03-01', 4),
+       ('2022-03-02',4),
+       (CURRENT_DATE, 4);
 
 INSERT INTO MENU_WITH_DISHES (menu_id, dish_id)
 VALUES (1, 1),

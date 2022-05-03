@@ -104,7 +104,7 @@ class VotingControllerTest extends AbstractControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID)))
                     .andDo(print())
-                    .andExpect(status().isUnprocessableEntity());
+                    .andExpect(status().isConflict());
         }
     }
 
@@ -156,7 +156,7 @@ class VotingControllerTest extends AbstractControllerTest {
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
                     .content(JsonUtil.writeValue(updated)))
                     .andDo(print())
-                    .andExpect(status().isUnprocessableEntity());
+                    .andExpect(status().isConflict());
         }
     }
 

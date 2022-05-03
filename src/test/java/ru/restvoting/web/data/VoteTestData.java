@@ -28,9 +28,9 @@ public class VoteTestData {
 
     public static final List<Vote> allVotes = List.of(adminVote, vote3, vote2, vote1);
 
-    public static final List<VoteTo> allVoteTos = VoteUtil.getTos(List.of(adminVote, vote3, vote2, vote1));
+    public static final List<VoteTo> allVoteTos = VoteUtil.getTos(List.of(vote3, adminVote, vote1, vote2));
 
-    public static final List<VoteTo> allTodayVoteTos = VoteUtil.getTos(List.of(adminVote, vote3));
+    public static final List<VoteTo> allTodayVoteTos = VoteUtil.getTos(List.of(vote3, adminVote));
 
     public static Vote getNew() {
         return new Vote(null, LocalDate.now(), 2, restaurantFrance);

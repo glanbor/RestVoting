@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,7 +33,7 @@ public class Menu extends BaseEntity {
     @JoinTable(name = "menu_with_dishes",
             joinColumns = {@JoinColumn(name ="menu_id")},
             inverseJoinColumns={@JoinColumn(name ="dish_id")})
-    private List<Dish> dishList;;
+    private List<Dish> dishList = new ArrayList<>();
 
     public Menu(Integer id, LocalDate menuDate, Restaurant restaurant, List<Dish> dishList) {
         super(id);

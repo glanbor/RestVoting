@@ -1,8 +1,11 @@
 package ru.restvoting.web.restaurant;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.model.Restaurant;
 
 import ru.restvoting.model.Vote;
+import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.repository.VoteRepository;
 import ru.restvoting.to.RestaurantTo;
@@ -31,25 +35,22 @@ import java.util.List;
 import static ru.restvoting.util.ValidationUtil.checkNew;
 
 @RestController
+@AllArgsConstructor
+@Slf4j
+@CacheConfig(cacheNames = "restaurants")
 @RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestaurantController {
     public static final String REST_URL = "/rest/admin/restaurants";
-    private static final Logger log = LoggerFactory.getLogger(RestaurantController.class);
 
     private final RestaurantRepository restaurantRepository;
     private final VoteRepository voteRepository;
-
-    @Autowired
-    public RestaurantController(RestaurantRepository restaurantRepository, VoteRepository voteRepository) {
-        this.restaurantRepository = restaurantRepository;
-        this.voteRepository = voteRepository;
-    }
+    private final MenuRepository menuRepository;
 
     @GetMapping()
-    @Cacheable("restaurants")
+    @Cacheable
     public List<RestaurantTo> getAll(
             @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-    @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         log.info("get all restaurants with votes amount by voting dates interval");
         List<Vote> all = voteRepository.getAll(DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
         return RestaurantUtil.getTos(restaurantRepository.findAll(), all);
@@ -63,14 +64,15 @@ public class RestaurantController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value="restaurants", allEntries = true)
+    @CacheEvict(value = "restaurants", allEntries = true)
     public void delete(@PathVariable int id) {
         log.info("delete restaurant {}", id);
-        ValidationUtil.checkNotFoundWithId(restaurantRepository.delete(id) !=0, id);
+        menuRepository.deleteFromMenuBeforeDeletingTheRestaurant(id);
+        restaurantRepository.deleteExisted(id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(value="restaurants", allEntries = true)
+    @CacheEvict(value = "restaurants", allEntries = true)
     public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
         log.info("create restaurant {}", restaurant);
         checkNew(restaurant);
@@ -83,7 +85,7 @@ public class RestaurantController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value="restaurants", allEntries = true)
+    @CacheEvict(value = "restaurants", allEntries = true)
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update restaurant {}", restaurant);
         ValidationUtil.assureIdConsistent(restaurant, id);

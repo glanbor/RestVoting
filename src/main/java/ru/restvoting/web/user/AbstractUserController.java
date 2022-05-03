@@ -62,7 +62,7 @@ public abstract class AbstractUserController {
 
     public void delete(int id) {
         log.info("delete {}", id);
-        checkNotFoundWithId(userRepository.delete(id) !=0, id);
+        userRepository.deleteExisted(id);
     }
 
     public void update(UserTo userTo, int id) {

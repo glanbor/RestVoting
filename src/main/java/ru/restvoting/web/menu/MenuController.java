@@ -1,6 +1,7 @@
 package ru.restvoting.web.menu;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,17 +30,16 @@ import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 @RequestMapping(value = MenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MenuController {
     public static final String REST_URL = "/rest/admin/restaurants/{restaurantId}/menus";
-    private static final Logger log = LoggerFactory.getLogger(MenuController.class);
 
     private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
 
 
     @GetMapping()
-    @Cacheable("menus")
     public List<Menu> getAll(@PathVariable int restaurantId,
                              @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                              @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -63,14 +63,12 @@ public class MenuController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value="menus", allEntries = true)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete menu {} for restaurant {}", id, restaurantId);
-        ValidationUtil.checkNotFoundWithId(menuRepository.delete(id, restaurantId) !=0, id);
+        menuRepository.deleteExisted(id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(value="menus", allEntries = true)
     public ResponseEntity<Menu> createWithLocation(@Valid @RequestBody Menu menu, @PathVariable int restaurantId) {
         log.info("create menu {} for restaurant {}", menu, restaurantId);
         checkNew(menu);
@@ -86,7 +84,6 @@ public class MenuController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value="menus", allEntries = true)
     public void update(@Valid @RequestBody Menu menu, @PathVariable int id, @PathVariable int restaurantId) {
         log.info("update menu {} with id={} for restaurant {}", menu, id, restaurantId);
         ValidationUtil.assureIdConsistent(menu, id);

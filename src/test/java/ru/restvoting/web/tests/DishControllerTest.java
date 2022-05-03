@@ -1,6 +1,8 @@
 package ru.restvoting.web.tests;
 
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -30,7 +32,7 @@ import static ru.restvoting.web.data.DishTestData.NOT_FOUND;
 import static ru.restvoting.web.data.RestaurantTestData.restaurantFrance;
 import static ru.restvoting.web.data.UserTestData.*;
 
-
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class DishControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL =
@@ -84,15 +86,6 @@ public class DishControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
-    void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + FR_DISH1_ID))
-                .andDo(print())
-                .andExpect(status().isNoContent());
-        assertFalse(dishRepository.findById(FR_DISH1_ID).isPresent());
     }
 
     @Test
@@ -181,5 +174,15 @@ public class DishControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+    }
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    // works only with this annotation (not transactional), not to disturb other tests must be executed last so the name starts with zz
+    @Transactional(propagation = Propagation.NEVER)
+    void zz_delete() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + FR_DISH1_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        assertFalse(dishRepository.findById(FR_DISH1_ID).isPresent());
     }
 }

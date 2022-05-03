@@ -1,5 +1,6 @@
 package ru.restvoting.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -19,5 +20,4 @@ public interface DishRepository extends BaseRepository<Dish> {
         return this.findById(id)
                 .filter(d -> d.getRestaurant().getId() == restaurantId).orElse(null);
     }
-
 }
