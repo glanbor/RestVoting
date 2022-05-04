@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static ru.restvoting.web.json.JacksonObjectMapper.getMapper;
-
 @UtilityClass
 public class JsonUtil {
     private static ObjectMapper mapper;
@@ -21,7 +19,7 @@ public class JsonUtil {
     }
 
     public static <T> List<T> readValues(String json, Class<T> clazz) {
-        ObjectReader reader = getMapper().readerFor(clazz);
+        ObjectReader reader = mapper.readerFor(clazz);
         try {
             return reader.<T>readValues(json).readAll();
         } catch (IOException e) {
@@ -31,7 +29,7 @@ public class JsonUtil {
 
     public static <T> T readValue(String json, Class<T> clazz) {
         try {
-            return getMapper().readValue(json, clazz);
+            return mapper.readValue(json, clazz);
         } catch (IOException e) {
             throw new IllegalArgumentException("Invalid read from JSON:\n'" + json + "'", e);
         }
@@ -39,7 +37,7 @@ public class JsonUtil {
 
     public static <T> String writeValue(T obj) {
         try {
-            return getMapper().writeValueAsString(obj);
+            return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Invalid write to JSON:\n'" + obj + "'", e);
         }
@@ -50,7 +48,7 @@ public class JsonUtil {
     }
 
     public static <T> String writeAdditionProps(T obj, Map<String, Object> addProps) {
-        Map<String, Object> map = getMapper().convertValue(obj, new TypeReference<>() {});
+        Map<String, Object> map = mapper.convertValue(obj, new TypeReference<>() {});
         map.putAll(addProps);
         return writeValue(map);
     }
