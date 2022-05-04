@@ -1,4 +1,4 @@
-package ru.restvoting;
+package ru.restvoting.web;
 
 import lombok.Getter;
 import lombok.ToString;

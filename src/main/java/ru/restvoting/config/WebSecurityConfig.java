@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ru.restvoting.AuthUser;
+import ru.restvoting.web.AuthUser;
 import ru.restvoting.model.Role;
 import ru.restvoting.model.User;
 import ru.restvoting.repository.UserRepository;

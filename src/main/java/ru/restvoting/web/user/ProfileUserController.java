@@ -9,7 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.restvoting.AuthUser;
+import ru.restvoting.web.AuthUser;
 import ru.restvoting.model.User;
 import ru.restvoting.to.UserTo;
 

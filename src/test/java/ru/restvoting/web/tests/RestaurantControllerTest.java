@@ -22,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_DUPLICATE_RESTAURANT;
-import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.*;
 import static ru.restvoting.web.data.RestaurantTestData.*;
 import static ru.restvoting.web.data.RestaurantTestData.NOT_FOUND;
@@ -156,7 +155,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
         Restaurant duplicate = new Restaurant(RESTAURANT1_ID, "Italia");
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(duplicate)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
@@ -169,7 +167,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
         Restaurant invalid = new Restaurant(RESTAURANT1_ID, "");
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());

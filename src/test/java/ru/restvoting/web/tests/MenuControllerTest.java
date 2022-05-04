@@ -23,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_DUPLICATE_MENU;
-import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.*;
 import static ru.restvoting.web.data.MenuTestData.NOT_FOUND;
 import static ru.restvoting.web.data.RestaurantTestData.restaurantUSA;
@@ -159,11 +158,11 @@ class MenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_MAIL)
     void updateInvalid() throws Exception {
         Menu invalid = new Menu(MENU1_ID, null, restaurantUSA, null);
         perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());

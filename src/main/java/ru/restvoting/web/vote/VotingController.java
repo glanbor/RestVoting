@@ -2,8 +2,6 @@ package ru.restvoting.web.vote;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,7 +13,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.restvoting.AuthUser;
+import ru.restvoting.web.AuthUser;
 import ru.restvoting.model.Menu;
 import ru.restvoting.model.Vote;
 import ru.restvoting.repository.MenuRepository;
@@ -48,8 +46,7 @@ public class VotingController {
     @Cacheable("todayMenus")
     public List<Menu> getAllMenusForToday() {
         log.info("get all Menus for today");
-        List<Menu> menuList = menuRepository.getAllByDate(LocalDate.now());
-        return menuList;
+        return menuRepository.getAllByDate(LocalDate.now());
     }
 
     @GetMapping("/by-user")

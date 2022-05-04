@@ -30,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_DUPLICATE_VOTE;
-import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.MenuTestData.MENU_WITH_DISHES_MATCHER;
 import static ru.restvoting.web.data.MenuTestData.allTodayMenu;
 import static ru.restvoting.web.data.RestaurantTestData.RESTAURANT_FR_ID;
@@ -72,6 +71,7 @@ class VotingControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER2_MAIL)
     void createWithLocation() throws Exception {
         Vote newVote = VoteTestData.getNew();
         try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
@@ -80,8 +80,7 @@ class VotingControllerTest extends AbstractControllerTest {
 
             ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                     .param("restaurantId", String.valueOf(RESTAURANT_FR_ID))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .with(userHttpBasic(user2)))
+                    .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isCreated());
 
@@ -138,8 +137,7 @@ class VotingControllerTest extends AbstractControllerTest {
                     .content(JsonUtil.writeValue(updated)))
                     .andDo(print())
                     .andExpect(status().isNoContent());
-            MatcherFactory.Matcher<Vote> voteMatcher = VOTE_MATCHER;
-            voteMatcher.assertMatch(voteRepository.getById(TODAY_VOTE1_ID), updated);
+            VOTE_MATCHER.assertMatch(voteRepository.getById(TODAY_VOTE1_ID), updated);
         }
     }
 

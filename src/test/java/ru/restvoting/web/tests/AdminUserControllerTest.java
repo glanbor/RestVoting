@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_DUPLICATE_EMAIL;
-import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.UserTestData.*;
 
 class AdminUserControllerTest extends AbstractControllerTest {

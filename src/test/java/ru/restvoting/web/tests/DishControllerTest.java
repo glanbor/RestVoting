@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_DUPLICATE_DISH;
-import static ru.restvoting.web.TestUtil.userHttpBasic;
 import static ru.restvoting.web.data.DishTestData.*;
 import static ru.restvoting.web.data.DishTestData.NOT_FOUND;
 import static ru.restvoting.web.data.RestaurantTestData.restaurantFrance;
@@ -75,7 +74,7 @@ public class DishControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getNotFound2() throws Exception {
+    void getNotFound2() {
         assertThrows(NotFoundException.class, () -> checkNotFoundWithId(
                 dishRepository.findById(NOT_FOUND).orElse(null), NOT_FOUND));
     }
@@ -170,7 +169,6 @@ public class DishControllerTest extends AbstractControllerTest {
         Dish invalid = new Dish(FR_DISH1_ID, "Invalid", 0.0, restaurantFrance);
         perform(MockMvcRequestBuilders.put(REST_URL + FR_DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin))
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
