@@ -16,7 +16,6 @@ import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
 import ru.restvoting.util.VoteUtil;
 import ru.restvoting.web.AbstractControllerTest;
-import ru.restvoting.web.MatcherFactory;
 import ru.restvoting.web.data.VoteTestData;
 import ru.restvoting.util.JsonUtil;
 import ru.restvoting.web.vote.VotingController;

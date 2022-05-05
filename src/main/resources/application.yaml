@@ -17,7 +17,7 @@ spring:
   datasource:
     # ImMemory
     url: jdbc:h2:mem:restvoting
-    #    tcp: jdbc:h2:tcp://localhost:9092/mem:restvoting
+    tcp: jdbc:h2:tcp://localhost:9092/mem:restvoting
     # Absolute path
     #    url: jdbc:h2:C:/projects/restvoting/db/restvoting
     #    tcp: jdbc:h2:tcp://localhost:9092/C:/projects/restvoting/db/restvoting
@@ -28,6 +28,7 @@ spring:
     #    tcp: jdbc:h2:tcp://localhost:9092/~/restvoting
     username: sa
     password:
+  h2.console.enabled: true
 
 # Jackson Serialization Issue Resolver
   jackson.visibility:

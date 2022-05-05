@@ -21,7 +21,7 @@ public class RestaurantTestData {
     public static final Restaurant restaurantUkraine = new Restaurant(RESTAURANT1_ID+2, "Ukraine");
     public static final Restaurant restaurantFrance = new Restaurant(RESTAURANT_FR_ID, "France");
 
-    public static final List<Restaurant> allRestaurants = List.of(restaurantUSA, restaurantItalia, restaurantUkraine, restaurantFrance);
+    public static final List<Restaurant> allRestaurants = List.of(restaurantItalia, restaurantUkraine, restaurantFrance, restaurantUSA);
 
     public static Restaurant getNew() {
         return new Restaurant(null, "CreatedRestaurant");

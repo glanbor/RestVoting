@@ -2,13 +2,12 @@ package ru.restvoting.web.dish;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.restvoting.model.BaseEntity;
 import ru.restvoting.model.Dish;
 import ru.restvoting.model.Menu;
 import ru.restvoting.repository.DishRepository;
@@ -57,10 +56,10 @@ public class DishController {
         Dish forDelete = get(id, restaurantId);
         List<Integer> menuIdsForDeleting = allForRestaurant.stream()
                 .filter(menu -> menu.getDishList().contains(forDelete))
-                .map(menu -> menu.getId())
+                .map(BaseEntity::getId)
                 .toList();
         for (Integer menuId : menuIdsForDeleting) {
-            menuRepository.delete(menuId);
+            menuRepository.deleteExisted(menuId);
         }
         dishRepository.deleteExisted(id);
     }

@@ -17,7 +17,8 @@ public class RestaurantUtil {
                 .map(res -> createTo(res, votes.stream()
                         .filter(v -> v.getRestaurant().getId() == res.getId())
                         .collect(Collectors.toList())))
-                .sorted(Comparator.comparingInt(RestaurantTo::getVotesAmount))
+                .sorted(Comparator.comparingInt(RestaurantTo::getVotesAmount).reversed()
+                        .thenComparing(RestaurantTo::getName))
                 .toList();
     }
 

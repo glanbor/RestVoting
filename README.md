@@ -21,7 +21,7 @@ Build a voting system for deciding where to have lunch.
 - Assume that your API will be used by a frontend developer to build frontend on top of that.
 
 ##Stack:
-Maven, Spring Boot, Spring MVC, Spring Security, Spring DataJPA, REST(Jackson), Swagger/OpenAPI, HSQLDB, Lombok, JUnit 5
+Maven, Spring Boot, Spring MVC, Spring Security, Spring DataJPA, REST(Jackson), Swagger/OpenAPI, H2 DB, Lombok, JUnit 5, CaffeineCache
 _____
 
-[REST API documentation](http://localhost:8080/rest/swagger-ui.html) by Swagger
+[REST API documentation]() by Swaggerhttp://localhost:8080/swagger-ui.html
