@@ -21,15 +21,16 @@ public class VoteTestData {
     public static final int TODAY_VOTE1_ID = VOTE1_ID + 2;
     public static final int NOT_FOUND = 100;
 
-    public static final Vote vote1 = new Vote(VOTE1_ID, LocalDate.of(2022, 03, 01), 1, restaurantUkraine);
-    public static final Vote vote2 = new Vote(VOTE1_ID+1, LocalDate.of(2022, 03, 01), 2, restaurantUkraine);
+    public static final Vote vote1 = new Vote(VOTE1_ID, LocalDate.of(2022, 3, 1), 1, restaurantUkraine);
+    public static final Vote vote2 = new Vote(VOTE1_ID+1, LocalDate.of(2022, 3, 1), 2, restaurantUkraine);
     public static final Vote vote3 = new Vote(TODAY_VOTE1_ID, LocalDate.now(), 1, restaurantItalia);
     public static final Vote adminVote = new Vote(TODAY_VOTE1_ID+1, LocalDate.now(), 3, restaurantItalia);
 
     public static final List<Vote> allVotes = List.of(adminVote, vote3, vote2, vote1);
 
-    public static final List<VoteTo> allVoteTos = VoteUtil.getTos(List.of(vote3, adminVote, vote1, vote2));
+    public static final List<Vote> allTodayVotes = List.of(adminVote, vote3);
 
+    public static final List<VoteTo> allVoteTos = VoteUtil.getTos(List.of(vote3, adminVote, vote1, vote2));
     public static final List<VoteTo> allTodayVoteTos = VoteUtil.getTos(List.of(vote3, adminVote));
 
     public static Vote getNew() {

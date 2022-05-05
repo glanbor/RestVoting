@@ -16,6 +16,8 @@ import ru.restvoting.web.data.RestaurantTestData;
 import ru.restvoting.util.JsonUtil;
 import ru.restvoting.web.restaurant.RestaurantController;
 
+import java.time.LocalDate;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,6 +28,7 @@ import static ru.restvoting.web.data.DishTestData.*;
 import static ru.restvoting.web.data.RestaurantTestData.*;
 import static ru.restvoting.web.data.RestaurantTestData.NOT_FOUND;
 import static ru.restvoting.web.data.UserTestData.*;
+import static ru.restvoting.web.data.VoteTestData.allTodayVotes;
 import static ru.restvoting.web.data.VoteTestData.allVotes;
 import static ru.restvoting.util.JsonUtil.writeValue;
 
@@ -35,6 +38,18 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Autowired
     private RestaurantRepository restaurantRepository;
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void getAllWithTodayVotes() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .param("startDate", String.valueOf(LocalDate.now()))
+                .param("endDate", String.valueOf(LocalDate.now())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(RestaurantUtil.getTos(allRestaurants, allTodayVotes)));
+    }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
