@@ -1,7 +1,6 @@
 package ru.restvoting.web.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +12,9 @@ import ru.restvoting.model.User;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+
+import static ru.restvoting.util.ValidationUtil.assureIdConsistent;
+import static ru.restvoting.util.ValidationUtil.checkNew;
 
 
 @RestController
@@ -34,12 +36,22 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createWithLocation( @Valid @RequestBody User user) {
-        User created = super.create(user);
+    public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
+        log.info("create {}", user);
+        checkNew(user);
+        User created = prepareAndSave(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@Valid @RequestBody User user, @PathVariable int id) {
+        log.info("update {} with id={}", user, id);
+        assureIdConsistent(user, id);
+        prepareAndSave(user);
     }
 
     @Override
@@ -47,14 +59,6 @@ public class AdminUserController extends AbstractUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         super.delete(id);
-    }
-
-
-    @Override
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody User user, @PathVariable int id) {
-        super.update(user, id);
     }
 
     @GetMapping("/by-email")

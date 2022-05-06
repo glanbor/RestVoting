@@ -13,6 +13,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.restvoting.error.IllegalRequestDataException;
 import ru.restvoting.web.AuthUser;
 import ru.restvoting.model.Menu;
 import ru.restvoting.model.Vote;
@@ -23,7 +24,6 @@ import ru.restvoting.to.VoteTo;
 import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.VoteUtil;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -59,7 +59,8 @@ public class VotingController {
     }
 
     @CacheEvict(value = "voting", allEntries = true)
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Vote> createWithLocation(@RequestParam int restaurantId,
                                                    @AuthenticationPrincipal AuthUser authUser) {
         int userId = authUser.id();
@@ -74,16 +75,16 @@ public class VotingController {
     }
 
     @CacheEvict(value = "voting", allEntries = true)
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Vote vote, @PathVariable int id,
-                       @RequestParam int restaurantId,
-                       @AuthenticationPrincipal AuthUser authUser) {
-        log.info("update vote {} with id={}", vote, id);
-        assureIdConsistent(vote, id);
-        validateVote(vote);
-        vote.setRestaurant(restaurantRepository.getById(restaurantId));
-        voteRepository.save(vote);
+    public void update(@PathVariable int id, @RequestParam int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
+        log.info("update vote with id={}", id);
+        Vote vote = voteRepository.findById(id).orElseThrow(
+                () -> new IllegalRequestDataException("There is no vote with this id"));
+            assureIdConsistent(vote, id);
+            validateVote(vote);
+            vote.setRestaurant(restaurantRepository.getById(restaurantId));
+            voteRepository.save(vote);
     }
 
     @GetMapping("/by-date")

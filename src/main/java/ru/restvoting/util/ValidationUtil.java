@@ -13,7 +13,7 @@ import java.time.LocalTime;
 
 public class ValidationUtil {
 
-    public static final LocalTime VOTING_DEADLINE = LocalTime.of(11, 0);
+    public static final LocalTime VOTING_DEADLINE = LocalTime.of(21, 0);
 
     private ValidationUtil() {
     }

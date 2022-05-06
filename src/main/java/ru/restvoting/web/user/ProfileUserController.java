@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.restvoting.util.UserUtil;
 import ru.restvoting.web.AuthUser;
 import ru.restvoting.model.User;
 import ru.restvoting.to.UserTo;
@@ -16,6 +17,9 @@ import ru.restvoting.to.UserTo;
 import javax.validation.Valid;
 
 import java.net.URI;
+
+import static ru.restvoting.util.ValidationUtil.assureIdConsistent;
+import static ru.restvoting.util.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = ProfileUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,7 +41,9 @@ public class ProfileUserController extends AbstractUserController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<User> register(@Valid @RequestBody UserTo userTo) {
-        User created = super.create(userTo);
+        log.info("register {}", userTo);
+        checkNew(userTo);
+        User created = prepareAndSave(UserUtil.createNewFromTo(userTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL).build().toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
@@ -46,7 +52,9 @@ public class ProfileUserController extends AbstractUserController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void update(@Valid @RequestBody UserTo userTo, @AuthenticationPrincipal AuthUser authUser) {
-        super.update(userTo, authUser.id());
+    public void update(@RequestBody @Valid UserTo userTo, @AuthenticationPrincipal AuthUser authUser) {
+        assureIdConsistent(userTo, authUser.id());
+        User user = authUser.getUser();
+        prepareAndSave(UserUtil.updateFromTo(user, userTo));
     }
 }
