@@ -13,7 +13,7 @@ import java.time.LocalTime;
 
 public class ValidationUtil {
 
-    public static final LocalTime VOTING_DEADLINE = LocalTime.of(21, 0);
+    public static final LocalTime VOTING_DEADLINE = LocalTime.of(11, 0);
 
     private ValidationUtil() {
     }
@@ -73,6 +73,13 @@ public class ValidationUtil {
     public static void checkModification(int count, int id) {
         if (count == 0) {
             throw new NotFoundException("Entity with id=" + id + " not found");
+        }
+    }
+
+    public static void checkMenuDate(LocalDate menuDate) {
+        if (menuDate.isBefore(LocalDate.now())
+                || (menuDate.isEqual(LocalDate.now())&& LocalTime.now().isAfter(VOTING_DEADLINE))) {
+            throw new IllegalDateTimeException("Illegal DateTime for creating or updating the menu");
         }
     }
 }
