@@ -1,5 +1,6 @@
 package ru.restvoting.web.dish;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,7 @@ public class DishController {
         return checkNotFoundWithId(dishRepository.get(id, restaurantId), id);
     }
 
+    @Operation(summary = "Delete the dish for the restaurant. Menu with this dish will be deleted")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
@@ -66,6 +68,7 @@ public class DishController {
         dishRepository.deleteExisted(id);
     }
 
+    @Operation(summary = "Create a dish for the restaurant. Test without Restaurant field")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<Dish> createWithLocation(@Valid @RequestBody Dish dish, @PathVariable int restaurantId) {
@@ -79,6 +82,7 @@ public class DishController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @Operation(summary = "Update the dish for the restaurant. Test without Restaurant field")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

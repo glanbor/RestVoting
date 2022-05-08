@@ -1,5 +1,6 @@
 package ru.restvoting.web.vote;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class VoteController {
 
     private final VoteRepository voteRepository;
 
+    @Operation(summary = "Get votes. Votes dates interval and user id may be specified")
     @GetMapping()
     public List<VoteTo> getAll(@RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,

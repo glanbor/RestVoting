@@ -1,5 +1,6 @@
 package ru.restvoting.web.menu;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,6 +39,7 @@ public class MenuController {
     private final RestaurantRepository restaurantRepository;
     private final DishRepository dishRepository;
 
+    @Operation(summary = "Get menus for the restaurant. Menu dates interval may be specified")
     @GetMapping()
     public List<Menu> getAll(@PathVariable int restaurantId,
                              @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -60,6 +62,7 @@ public class MenuController {
         menuRepository.deleteExisted(id);
     }
 
+    @Operation(summary = "Create a restaurant. Test with name field")
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -94,6 +97,7 @@ public class MenuController {
 //        return ResponseEntity.created(uriOfNewResource).body(created);
 //    }
 
+    @Operation(summary = "Update the restaurant. Test with name field")
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

@@ -1,5 +1,6 @@
 package ru.restvoting.web.restaurant;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ public class RestaurantController {
     private final VoteRepository voteRepository;
     private final MenuRepository menuRepository;
 
+    @Operation(summary = "Get restaurants. Dates interval for counting votes amount may be specified")
     @GetMapping()
     @Cacheable
     public List<RestaurantTo> getAll(
