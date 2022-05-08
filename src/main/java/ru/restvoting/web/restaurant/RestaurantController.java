@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.model.Restaurant;
@@ -65,6 +66,7 @@ public class RestaurantController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(value = "restaurants", allEntries = true)
+    @Transactional
     public void delete(@PathVariable int id) {
         log.info("delete restaurant {}", id);
         menuRepository.deleteFromMenuBeforeDeletingTheRestaurant(id);

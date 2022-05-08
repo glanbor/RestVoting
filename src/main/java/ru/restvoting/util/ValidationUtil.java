@@ -78,7 +78,7 @@ public class ValidationUtil {
 
     public static void checkMenuDate(LocalDate menuDate) {
         if (menuDate.isBefore(LocalDate.now())
-                || (menuDate.isEqual(LocalDate.now())&& LocalTime.now().isAfter(VOTING_DEADLINE))) {
+                || (menuDate.isEqual(LocalDate.now())&& DateTimeUtil.getLocalTime().isAfter(VOTING_DEADLINE))) {
             throw new IllegalDateTimeException("Illegal DateTime for creating or updating the menu");
         }
     }

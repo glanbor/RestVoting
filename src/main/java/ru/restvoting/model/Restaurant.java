@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString(callSuper = true, exclude = {"dishList", "menuList", "voteList"})
 @Entity
 @Table(name = "restaurant", uniqueConstraints =
@@ -19,6 +18,7 @@ public class Restaurant extends NamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @JsonManagedReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Dish> dishList;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
@@ -28,6 +28,7 @@ public class Restaurant extends NamedEntity {
 
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OrderBy("voteDate DESC")
     private List<Vote> voteList;
 
@@ -36,6 +37,19 @@ public class Restaurant extends NamedEntity {
     }
 
     public Restaurant(Restaurant r) {
-        this(r.id, r.name);
+        this(r.id, r.name, r.dishList, r.menuList, r.voteList);
+    }
+
+    public Restaurant(Integer id, String name, List<Dish> dishList, List<Menu> menuList, List<Vote> voteList) {
+        super(id, name);
+        this.dishList = dishList;
+        this.menuList = menuList;
+        this.voteList = voteList;
+    }
+
+    public Restaurant(Integer id, String name, List<Dish> dishList, List<Menu> menuList) {
+        super(id, name);
+        this.dishList = dishList;
+        this.menuList = menuList;
     }
 }

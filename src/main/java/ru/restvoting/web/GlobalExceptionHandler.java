@@ -8,7 +8,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.restvoting.error.*;
@@ -35,14 +33,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String EXCEPTION_DUPLICATE_EMAIL = "User with this email already exists";
     public static final String EXCEPTION_DUPLICATE_DISH = "Dish with this name already exists in this restaurant";
-    public static final String EXCEPTION_DUPLICATE_MENU = "Menu with this date already exists in this restaurant";
+    public static final String EXCEPTION_MENU_ERROR = "Illegal DateTime for creating or updating the menu";
     public static final String EXCEPTION_DUPLICATE_RESTAURANT = "Restaurant with this name already exists";
     public static final String EXCEPTION_DUPLICATE_VOTE = "Vote with this date already exists for this user";
 
     private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
             "unique_email_for_user_idx", EXCEPTION_DUPLICATE_EMAIL,
             "unique_dish_name_for_restaurant_idx", EXCEPTION_DUPLICATE_DISH,
-            "unique_menu_date_for_restaurant_idx", EXCEPTION_DUPLICATE_MENU,
+            "unique_menu_date_for_restaurant_idx", EXCEPTION_MENU_ERROR,
             "unique_name_for_restaurant_idx", EXCEPTION_DUPLICATE_RESTAURANT,
             "unique_vote_date_for_user_idx", EXCEPTION_DUPLICATE_VOTE);
 
@@ -109,12 +107,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.CONFLICT);
     }
 
-
-//    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
-//    public ResponseEntity<ErrorInfo> illegalRequestDataError(HttpServletRequest req, Exception e) {
-//        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
-//    }
-//
 
     private Map<String, Object> getDefaultBody(WebRequest request, ErrorAttributeOptions options, String msg) {
         Map<String, Object> body = errorAttributes.getErrorAttributes(request, options);

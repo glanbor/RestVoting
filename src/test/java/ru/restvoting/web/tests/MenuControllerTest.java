@@ -1,6 +1,7 @@
 package ru.restvoting.web.tests;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -11,18 +12,23 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.restvoting.model.Menu;
 import ru.restvoting.repository.MenuRepository;
 import ru.restvoting.error.NotFoundException;
+import ru.restvoting.util.DateTimeUtil;
+import ru.restvoting.util.ValidationUtil;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.MenuTestData;
 import ru.restvoting.util.JsonUtil;
 import ru.restvoting.web.menu.MenuController;
 
+import java.time.temporal.ChronoUnit;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mockStatic;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
-import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_DUPLICATE_MENU;
+import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_MENU_ERROR;
 import static ru.restvoting.web.data.MenuTestData.*;
 import static ru.restvoting.web.data.MenuTestData.NOT_FOUND;
 import static ru.restvoting.web.data.RestaurantTestData.restaurantUSA;
@@ -73,7 +79,7 @@ class MenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getWithDishes() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + MENU1_ID + "/with-dishes"))
+        perform(MockMvcRequestBuilders.get(REST_URL + MENU1_ID))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -110,8 +116,9 @@ class MenuControllerTest extends AbstractControllerTest {
     void createWithLocation() throws Exception {
         Menu newMenu = MenuTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newMenu)))
+                .param("menuDate", newMenu.getMenuDate().toString())
+                .param("dishIds", "1", "2")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
         Menu created = MENU_WITH_DISHES_MATCHER.readFromJson(action);
@@ -121,28 +128,40 @@ class MenuControllerTest extends AbstractControllerTest {
         MENU_WITH_DISHES_MATCHER.assertMatch(menuRepository.getById(newId), newMenu);
     }
 
+//    test for the commented method with Menu request body
+
+//    @Test
+//    @WithUserDetails(value = ADMIN_MAIL)
+//    void createWithLocation() throws Exception {
+//        Menu newMenu = MenuTestData.getNew();
+//        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(JsonUtil.writeValue(newMenu)))
+//                .andDo(print())
+//                .andExpect(status().isCreated());
+//        Menu created = MENU_WITH_DISHES_MATCHER.readFromJson(action);
+//        int newId = created.id();
+//        newMenu.setId(newId);
+//        MENU_WITH_DISHES_MATCHER.assertMatch(created, newMenu);
+//        MENU_WITH_DISHES_MATCHER.assertMatch(menuRepository.getById(newId), newMenu);
+//    }
+
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     @Transactional(propagation = Propagation.NEVER)
     void createDuplicate() throws Exception {
         Menu duplicate = MenuTestData.getDuplicate();
-        perform(MockMvcRequestBuilders.post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(duplicate)))
-                .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_MENU)));
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
-    void createInvalid() throws Exception {
-        Menu invalid = new Menu(null, null, restaurantUSA, null);
-        perform(MockMvcRequestBuilders.post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(invalid)))
-                .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+        try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
+            dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
+                    .thenReturn(ValidationUtil.VOTING_DEADLINE.minus(1, ChronoUnit.HOURS));
+            perform(MockMvcRequestBuilders.post(REST_URL)
+                    .param("menuDate", duplicate.getMenuDate().toString())
+                    .param("dishIds", "1", "2")
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(print())
+                    .andExpect(status().isUnprocessableEntity())
+                    .andExpect(content().string(containsString(EXCEPTION_MENU_ERROR)));
+        }
     }
 
     @Test
@@ -150,21 +169,11 @@ class MenuControllerTest extends AbstractControllerTest {
     void update() throws Exception {
         Menu updated = MenuTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated)))
+                .param("menuDate", updated.getMenuDate().toString())
+                .param("dishIds", "1", "2")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         MENU_WITH_DISHES_MATCHER.assertMatch(menuRepository.getById(MENU1_ID), updated);
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
-    void updateInvalid() throws Exception {
-        Menu invalid = new Menu(MENU1_ID, null, restaurantUSA, null);
-        perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(invalid)))
-                .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
     }
 }

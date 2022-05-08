@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.model.BaseEntity;
@@ -49,6 +50,7 @@ public class DishController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete dish {} for restaurant {}", id, restaurantId);
         List<Menu> allForRestaurant = menuRepository.getAllForRestaurant(restaurantId,
@@ -65,6 +67,7 @@ public class DishController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
     public ResponseEntity<Dish> createWithLocation(@Valid @RequestBody Dish dish, @PathVariable int restaurantId) {
         log.info("create dish {} for restaurant {}", dish, restaurantId);
         checkNew(dish);
@@ -78,6 +81,7 @@ public class DishController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void update(@Valid @RequestBody Dish dish, @PathVariable int id, @PathVariable int restaurantId) {
         log.info("update {} with id={} for restaurant {}", dish, id, restaurantId);
         ValidationUtil.assureIdConsistent(dish, id);

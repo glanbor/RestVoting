@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.error.NotFoundException;
@@ -61,6 +62,7 @@ public class MenuController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
     public ResponseEntity<Menu> createWithLocation(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate menuDate,
                                                    @RequestParam List<Integer> dishIds,
                                                    @PathVariable int restaurantId) {
@@ -76,7 +78,7 @@ public class MenuController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-//    doesn't work in swagger
+//    not good controller method for testing in swagger
 
 //    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 //    public ResponseEntity<Menu> createWithLocation(@Valid @RequestBody Menu menu, @PathVariable int restaurantId) {
@@ -94,6 +96,7 @@ public class MenuController {
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void update(@PathVariable int id, @PathVariable int restaurantId,
                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate menuDate,
                        @RequestParam List<Integer> dishIds) {
@@ -104,10 +107,9 @@ public class MenuController {
         List<Dish> dishList = dishIds.stream().map(dishId -> dishRepository.get(dishId, restaurantId)).toList();
         menu.setDishList(dishList);
         menu.setMenuDate(menuDate);
-        menuRepository.save(menu);
     }
 
-//    doesn't work in swagger
+//    not good controller method for testing in swagger
 
 //    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 //    @ResponseStatus(HttpStatus.NO_CONTENT)
