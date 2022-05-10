@@ -1,15 +1,15 @@
-#Restaurant voting api for deciding where to have lunch
+# Restaurant voting api for deciding where to have lunch
 
-###[TopJava Internship](https://javaops.ru/view/topjava) graduation project
+### [TopJava Internship](https://javaops.ru/view/topjava) graduation project
 - <a href="https://github.com/glanbor/RestVoting.git">GitHub</a> project reference
 
-##Task:
+## Task:
 
-####Design and implement a REST API using Hibernate/Spring/SpringMVC (or Spring-Boot) without frontend.
+#### Design and implement a REST API using Hibernate/Spring/SpringMVC (or Spring-Boot) without frontend.
 Build a voting system for deciding where to have lunch.
 
 - 2 types of users: admin and regular users
-- Admin can input a restaurant and it's lunch menu of the day (2-5 items usually, just a dish name and price)
+- Admin can input a restaurant, and it's lunch menu of the day (2-5 items usually, just a dish name and price)
 - Menu changes each day (admins do the updates)
 - Users can vote on which restaurant they want to have lunch at
 - Only one vote counted per user
@@ -20,8 +20,8 @@ Build a voting system for deciding where to have lunch.
 - Make sure everything works with latest version that is on github
 - Assume that your API will be used by a frontend developer to build frontend on top of that.
 
-##Stack:
+## Stack:
 Maven, Spring Boot, Spring MVC, Spring Security, Spring DataJPA, REST(Jackson), Swagger/OpenAPI, H2 DB, Lombok, JUnit 5, CaffeineCache
 _____
 
-[REST API documentation]() by Swaggerhttp://localhost:8080/swagger-ui.html
+[REST API documentation](http://localhost:8080/swagger-ui.html) by Swagger
