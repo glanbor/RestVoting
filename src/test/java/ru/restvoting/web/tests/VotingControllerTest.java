@@ -93,21 +93,6 @@ class VotingControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void createInvalidTime() throws Exception {
-        try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {
-            dateTimeUtilMockedStatic.when(DateTimeUtil::getLocalTime)
-                    .thenReturn(ValidationUtil.VOTING_DEADLINE.plus(1, ChronoUnit.HOURS));
-
-            perform(MockMvcRequestBuilders.post(REST_URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .param("restaurantId", String.valueOf(RESTAURANT_FR_ID)))
-                    .andDo(print())
-                    .andExpect(status().isConflict());
-        }
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
     @Transactional(propagation = Propagation.NEVER)
     void createDuplicate() throws Exception {
         try (MockedStatic<DateTimeUtil> dateTimeUtilMockedStatic = mockStatic(DateTimeUtil.class)) {

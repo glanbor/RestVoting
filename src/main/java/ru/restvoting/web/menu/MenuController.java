@@ -50,7 +50,7 @@ public class MenuController {
 
     @GetMapping("/{id}")
     public Menu get(@PathVariable int id, @PathVariable int restaurantId) {
-        log.info("get menu {} for restaurant {} with dishes", id, restaurantId);
+        log.info("get menu {} for restaurant {}", id, restaurantId);
         Menu menu = menuRepository.getWithDishes(id, restaurantId);
         return checkNotFoundWithId(menu, id);
     }

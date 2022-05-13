@@ -54,14 +54,10 @@ public class ValidationUtil {
     }
 
     public static void validateVote(Vote vote) {
-        if (!vote.getVoteDate().isEqual(LocalDate.now()) || DateTimeUtil.getLocalTime().isAfter(VOTING_DEADLINE)) {
-            throw new IllegalDateTimeException("The vote can be accepted only today before 11:00");
+        if (!vote.getVoteDate().isEqual(LocalDate.now()) || (!vote.isNew() && DateTimeUtil.getLocalTime().isAfter(VOTING_DEADLINE))) {
+            throw new IllegalDateTimeException("The vote can be accepted only today and can be changed only before 11:00");
         }
     }
-
-//    public static LocalTime getLocalTime() {
-//         return LocalTime.now();
-//    }
 
     //  https://stackoverflow.com/a/65442410/548473
     @NonNull
