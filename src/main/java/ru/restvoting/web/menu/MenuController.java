@@ -62,7 +62,6 @@ public class MenuController {
         menuRepository.deleteExisted(id);
     }
 
-    @Operation(summary = "Create a restaurant. Test with name field")
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -97,7 +96,7 @@ public class MenuController {
 //        return ResponseEntity.created(uriOfNewResource).body(created);
 //    }
 
-    @Operation(summary = "Update the restaurant. Test with name field")
+
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

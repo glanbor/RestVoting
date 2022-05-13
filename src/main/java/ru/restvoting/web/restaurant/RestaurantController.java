@@ -75,6 +75,7 @@ public class RestaurantController {
         restaurantRepository.deleteExisted(id);
     }
 
+    @Operation(summary = "Create the restaurant. Test with name field")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(value = "restaurants", allEntries = true)
     public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
@@ -86,7 +87,7 @@ public class RestaurantController {
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
-
+    @Operation(summary = "Update the restaurant. Test with only name field")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(value = "restaurants", allEntries = true)

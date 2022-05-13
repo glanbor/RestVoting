@@ -36,20 +36,4 @@ public class Restaurant extends NamedEntity {
         super(id, name);
     }
 
-    public Restaurant(Restaurant r) {
-        this(r.id, r.name, r.dishList, r.menuList, r.voteList);
-    }
-
-    public Restaurant(Integer id, String name, List<Dish> dishList, List<Menu> menuList, List<Vote> voteList) {
-        super(id, name);
-        this.dishList = dishList;
-        this.menuList = menuList;
-        this.voteList = voteList;
-    }
-
-    public Restaurant(Integer id, String name, List<Dish> dishList, List<Menu> menuList) {
-        super(id, name);
-        this.dishList = dishList;
-        this.menuList = menuList;
-    }
 }

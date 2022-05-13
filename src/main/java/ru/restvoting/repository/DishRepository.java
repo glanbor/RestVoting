@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import org.springframework.transaction.annotation.Transactional;
+import ru.restvoting.error.NotFoundException;
 import ru.restvoting.model.Dish;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public interface DishRepository extends BaseRepository<Dish> {
 
     default Dish get(int id, int restaurantId) {
         return this.findById(id)
-                .filter(d -> d.getRestaurant().getId() == restaurantId).orElse(null);
+                .filter(d -> d.getRestaurant().getId() == restaurantId).orElseThrow(
+                        () -> new NotFoundException("No dish with this id in this restaurant"));
     }
 }
