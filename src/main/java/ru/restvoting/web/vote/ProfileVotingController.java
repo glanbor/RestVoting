@@ -88,21 +88,10 @@ public class ProfileVotingController {
         log.info("update vote with id={}", id);
         Vote vote = voteRepository.findById(id).orElseThrow(
                 () -> new IllegalRequestDataException("There is no vote with this id"));
-            assureIdConsistent(vote, id);
             validateVote(vote);
             vote.setRestaurant(restaurantRepository.getById(restaurantId));
             voteRepository.save(vote);
     }
 
-    @Operation(summary = "Get restaurants with votes for voting result. Dates interval for counting votes amount may be specified")
-    @GetMapping("/results")
-    @Cacheable("restaurants")
-    public List<RestaurantTo> getVotingResults(
-            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        log.info("get all restaurants with votes amount by voting dates interval");
-        List<Vote> voteList = voteRepository.getAll(DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
-        return RestaurantUtil.getTos(restaurantRepository.findAll(), voteList);
-    }
 }
 
