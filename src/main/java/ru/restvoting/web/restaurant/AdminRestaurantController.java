@@ -3,13 +3,9 @@ package ru.restvoting.web.restaurant;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,8 +36,8 @@ import static ru.restvoting.util.ValidationUtil.checkNew;
 @AllArgsConstructor
 @Slf4j
 @CacheConfig(cacheNames = "restaurants")
-@RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class RestaurantController {
+@RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class AdminRestaurantController {
     public static final String REST_URL = "/rest/admin/restaurants";
 
     private final RestaurantRepository restaurantRepository;
@@ -58,13 +54,13 @@ public class RestaurantController {
         List<Vote> all = voteRepository.getAll(DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
         return RestaurantUtil.getTos(restaurantRepository.findAll(), all);
     }
-
+    @Operation(summary = "Get restaurant by id")
     @GetMapping("/{id}")
     public Restaurant get(@PathVariable int id) {
         log.info("get restaurant {}", id);
         return ValidationUtil.checkNotFoundWithId(restaurantRepository.findById(id).orElse(null), id);
     }
-
+    @Operation(summary = "Delete restaurant by id")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(value = "restaurants", allEntries = true)

@@ -28,21 +28,21 @@ import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping(value = DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class DishController {
+@RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class AdminDishController {
 
     public static final String REST_URL = "/rest/admin/restaurants/{restaurantId}/dishes";
 
     private final DishRepository dishRepository;
     private final RestaurantRepository restaurantRepository;
     private final MenuRepository menuRepository;
-
+    @Operation(summary = "Get all dishes of the restaurant")
     @GetMapping()
     public List<Dish> getAll(@PathVariable int restaurantId) {
         log.info("getAll Dishes for restaurant {}", restaurantId);
         return dishRepository.getAll(restaurantId);
     }
-
+    @Operation(summary = "Get dish by id for the restaurant")
     @GetMapping("/{id}")
     public Dish get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get dish {} for restaurant {}", id, restaurantId);

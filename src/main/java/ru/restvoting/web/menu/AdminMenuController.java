@@ -11,7 +11,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.restvoting.error.NotFoundException;
 import ru.restvoting.model.Dish;
 import ru.restvoting.model.Menu;
 import ru.restvoting.model.Restaurant;
@@ -21,7 +20,6 @@ import ru.restvoting.repository.RestaurantRepository;
 import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,8 +29,8 @@ import static ru.restvoting.util.ValidationUtil.*;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping(value = MenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class MenuController {
+@RequestMapping(value = AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class AdminMenuController {
     public static final String REST_URL = "/rest/admin/restaurants/{restaurantId}/menus";
 
     private final MenuRepository menuRepository;
@@ -47,21 +45,21 @@ public class MenuController {
         log.info("get menus for restaurant {} with interval", restaurantId);
         return menuRepository.getAllForRestaurant(restaurantId, DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
     }
-
+    @Operation(summary = "Get menu by id for the restaurant")
     @GetMapping("/{id}")
     public Menu get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get menu {} for restaurant {}", id, restaurantId);
         Menu menu = menuRepository.getWithDishes(id, restaurantId);
         return checkNotFoundWithId(menu, id);
     }
-
+    @Operation(summary = "Delete menu by id for the restaurant")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete menu {} for restaurant {}", id, restaurantId);
         menuRepository.deleteExisted(id);
     }
-
+    @Operation(summary = "Create menu for the restaurant")
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -96,7 +94,7 @@ public class MenuController {
 //        return ResponseEntity.created(uriOfNewResource).body(created);
 //    }
 
-
+    @Operation(summary = "Update menu by id for the restaurant")
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

@@ -16,8 +16,7 @@ import ru.restvoting.util.DateTimeUtil;
 import ru.restvoting.util.ValidationUtil;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.MenuTestData;
-import ru.restvoting.util.JsonUtil;
-import ru.restvoting.web.menu.MenuController;
+import ru.restvoting.web.menu.AdminMenuController;
 
 import java.time.temporal.ChronoUnit;
 
@@ -31,12 +30,11 @@ import static ru.restvoting.util.ValidationUtil.checkNotFoundWithId;
 import static ru.restvoting.web.GlobalExceptionHandler.EXCEPTION_MENU_ERROR;
 import static ru.restvoting.web.data.MenuTestData.*;
 import static ru.restvoting.web.data.MenuTestData.NOT_FOUND;
-import static ru.restvoting.web.data.RestaurantTestData.restaurantUSA;
 import static ru.restvoting.web.data.UserTestData.*;
 
-class MenuControllerTest extends AbstractControllerTest {
+class AdminMenuControllerTest extends AbstractControllerTest {
     private static final String REST_URL =
-            MenuController.REST_URL.replace("{restaurantId}", "1") + '/';
+            AdminMenuController.REST_URL.replace("{restaurantId}", "1") + '/';
 
     @Autowired
     private MenuRepository menuRepository;

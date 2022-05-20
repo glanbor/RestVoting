@@ -9,7 +9,7 @@ import ru.restvoting.repository.VoteRepository;
 import ru.restvoting.util.VoteUtil;
 import ru.restvoting.error.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
-import ru.restvoting.web.vote.VoteController;
+import ru.restvoting.web.vote.AdminVoteController;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -20,8 +20,8 @@ import static ru.restvoting.web.data.UserTestData.*;
 import static ru.restvoting.web.data.VoteTestData.*;
 import static ru.restvoting.web.data.VoteTestData.NOT_FOUND;
 
-class VoteControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = VoteController.REST_URL + "/";
+class AdminVoteControllerTest extends AbstractControllerTest {
+    private static final String REST_URL = AdminVoteController.REST_URL + "/";
 
     @Autowired
     private VoteRepository voteRepository;

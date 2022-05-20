@@ -14,7 +14,7 @@ import ru.restvoting.util.RestaurantUtil;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.RestaurantTestData;
 import ru.restvoting.util.JsonUtil;
-import ru.restvoting.web.restaurant.RestaurantController;
+import ru.restvoting.web.restaurant.AdminRestaurantController;
 
 import java.time.LocalDate;
 
@@ -32,9 +32,9 @@ import static ru.restvoting.web.data.VoteTestData.allTodayVotes;
 import static ru.restvoting.web.data.VoteTestData.allVotes;
 import static ru.restvoting.util.JsonUtil.writeValue;
 
-class RestaurantControllerTest extends AbstractControllerTest {
+class AdminRestaurantControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = RestaurantController.REST_URL + '/';
+    private static final String REST_URL = AdminRestaurantController.REST_URL + '/';
 
     @Autowired
     private RestaurantRepository restaurantRepository;

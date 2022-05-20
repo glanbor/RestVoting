@@ -1,5 +1,6 @@
 package ru.restvoting.web.vote;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.restvoting.error.IllegalRequestDataException;
+import ru.restvoting.to.RestaurantTo;
+import ru.restvoting.util.RestaurantUtil;
 import ru.restvoting.web.AuthUser;
 import ru.restvoting.model.Menu;
 import ru.restvoting.model.Vote;
@@ -35,14 +38,14 @@ import static ru.restvoting.util.ValidationUtil.*;
 @CacheConfig(cacheNames = "voting")
 @AllArgsConstructor
 @Slf4j
-@RequestMapping(value = VotingController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class VotingController {
+@RequestMapping(value = ProfileVotingController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class ProfileVotingController {
     public static final String REST_URL = "/rest/voting";
 
     private final VoteRepository voteRepository;
     private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
-
+    @Operation(summary = "Get today's menus for voting")
     @GetMapping()
     @Cacheable("todayMenus")
     public List<Menu> getAllMenusForToday() {
@@ -50,6 +53,7 @@ public class VotingController {
         return menuRepository.getAllByDate(LocalDate.now());
     }
 
+    @Operation(summary = "Get vote for authenticated use for date")
     @GetMapping("/by-user")
     @Cacheable
     public VoteTo getByUser(@AuthenticationPrincipal AuthUser authUser,
@@ -58,7 +62,7 @@ public class VotingController {
         Vote byUserForDate = voteRepository.getByUserForDate(authUser.id(), lunchDate);
         return VoteUtil.createTo(byUserForDate);
     }
-
+    @Operation(summary = "Create vote for authenticated user")
     @CacheEvict(value = "voting", allEntries = true)
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
@@ -75,7 +79,7 @@ public class VotingController {
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
-
+    @Operation(summary = "Update vote for authenticated user")
     @CacheEvict(value = "voting", allEntries = true)
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -90,12 +94,15 @@ public class VotingController {
             voteRepository.save(vote);
     }
 
-    @GetMapping("/by-date")
-    @Cacheable
-    public List<VoteTo> getAllByDate(
-            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lunchDate) {
-        log.info("get all votes for date {}", lunchDate);
-        return VoteUtil.getTos(voteRepository.getAll(DateTimeUtil.setStartDate(lunchDate), DateTimeUtil.setEndDate(lunchDate)));
+    @Operation(summary = "Get restaurants with votes for voting result. Dates interval for counting votes amount may be specified")
+    @GetMapping("/results")
+    @Cacheable("restaurants")
+    public List<RestaurantTo> getVotingResults(
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        log.info("get all restaurants with votes amount by voting dates interval");
+        List<Vote> voteList = voteRepository.getAll(DateTimeUtil.setStartDate(startDate), DateTimeUtil.setEndDate(endDate));
+        return RestaurantUtil.getTos(restaurantRepository.findAll(), voteList);
     }
 }
 

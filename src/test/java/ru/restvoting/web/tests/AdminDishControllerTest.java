@@ -15,7 +15,7 @@ import ru.restvoting.repository.DishRepository;
 import ru.restvoting.error.NotFoundException;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.DishTestData;
-import ru.restvoting.web.dish.DishController;
+import ru.restvoting.web.dish.AdminDishController;
 import ru.restvoting.util.JsonUtil;
 
 import static org.hamcrest.Matchers.containsString;
@@ -31,10 +31,10 @@ import static ru.restvoting.web.data.RestaurantTestData.restaurantFrance;
 import static ru.restvoting.web.data.UserTestData.*;
 
 
-public class DishControllerTest extends AbstractControllerTest {
+public class AdminDishControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL =
-            DishController.REST_URL.replace("{restaurantId}", "4") + '/';
+            AdminDishController.REST_URL.replace("{restaurantId}", "4") + '/';
 
     @Autowired
     private DishRepository dishRepository;

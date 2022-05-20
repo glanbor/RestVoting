@@ -18,7 +18,7 @@ import ru.restvoting.util.VoteUtil;
 import ru.restvoting.web.AbstractControllerTest;
 import ru.restvoting.web.data.VoteTestData;
 import ru.restvoting.util.JsonUtil;
-import ru.restvoting.web.vote.VotingController;
+import ru.restvoting.web.vote.ProfileVotingController;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -35,8 +35,8 @@ import static ru.restvoting.web.data.RestaurantTestData.RESTAURANT_FR_ID;
 import static ru.restvoting.web.data.UserTestData.*;
 import static ru.restvoting.web.data.VoteTestData.*;
 
-class VotingControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = VotingController.REST_URL + '/';
+class ProfileVotingControllerTest extends AbstractControllerTest {
+    private static final String REST_URL = ProfileVotingController.REST_URL + '/';
 
     @Autowired
     private VoteRepository voteRepository;
@@ -142,14 +142,5 @@ class VotingControllerTest extends AbstractControllerTest {
         }
     }
 
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getAllByDate() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "by-date")
-                .param("lunchDate", String.valueOf(LocalDate.now())))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(allTodayVoteTos));
-    }
+
 }
